@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdexcept>
+#include <cstdlib>
 
 int main(){
   int tek = 0, prosh = 0, tek_dl = 0, max_dl = 0;
@@ -13,6 +14,7 @@ int main(){
       if (tek <= prosh) {
         ++tek_dl;
       }
+
       else {
         tek_dl = 1;
       }
@@ -29,6 +31,7 @@ int main(){
 
     std::cout << max_dl << "\n";
   }
+
   catch (const std::invalid_argument &ex) {
     std::cerr <<  ex.what() << "\n";
     std::exit(1);
