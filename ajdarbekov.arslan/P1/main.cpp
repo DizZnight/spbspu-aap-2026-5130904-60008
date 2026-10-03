@@ -22,15 +22,12 @@ int main(){
 			}
 
 			prosh = tek;
-
-
 		}
 		if (!std::cin) {
 			throw std::invalid_argument("Not a sequence");
 		}
 
 		std::cout << max_dl << "\n";
-
 	}
 	catch (const std::invalid_argument &ex) {
 		std::cerr <<  ex.what() << "\n";
