@@ -2,7 +2,8 @@
 #include <stdexcept>
 #include <cstdlib>
 
-int main(){
+int main()
+{
   int tek = 0, prosh = 0, tek_dl = 0, max_dl = 0;
 
   try {
@@ -29,12 +30,14 @@ int main(){
       throw std::invalid_argument("Not a sequence");
     }
 
-    std::cout << max_dl << "\n";
   }
 
   catch (const std::invalid_argument &ex) {
-    std::cerr <<  ex.what() << "\n";
+    std::cerr << ex.what() << "\n";
     std::exit(1);
   }
+
+  std::cout << max_dl << "\n";
+
   return 0;
 }
