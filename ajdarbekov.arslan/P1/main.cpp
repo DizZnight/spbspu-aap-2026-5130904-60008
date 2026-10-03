@@ -24,7 +24,7 @@ int main(){
 			prosh = tek;
 
 
-		} 			
+		}
 		if (!std::cin) {
 			throw std::invalid_argument("Not a sequence");
 		}
