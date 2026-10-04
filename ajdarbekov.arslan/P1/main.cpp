@@ -4,27 +4,27 @@
 
 int main()
 {
-  int tek = 0, prosh = 0, tek_dl = 0, max_dl = 0;
+  int current = 0, previous = 0, cur_len = 0, max_len = 0;
 
   try {
-    while (std::cin >> tek) {
-      if (tek == 0) {
+    while (std::cin >> current) {
+      if (current == 0) {
         break;
       }
 
-      if (tek <= prosh) {
-        ++tek_dl;
+      if (current <= previous) {
+        ++cur_len;
       }
 
       else {
-        tek_dl = 1;
+        cur_len = 1;
       }
 
-      if (tek_dl > max_dl) {
-        max_dl = tek_dl;
+      if (cur_len > max_len) {
+        max_len = cur_len;
       }
 
-      prosh = tek;
+      previous = current;
     }
     if (!std::cin) {
       throw std::invalid_argument("Not a sequence");
@@ -37,7 +37,7 @@ int main()
     std::exit(1);
   }
 
-  std::cout << max_dl << "\n";
+  std::cout << max_len << "\n";
 
   return 0;
 }
