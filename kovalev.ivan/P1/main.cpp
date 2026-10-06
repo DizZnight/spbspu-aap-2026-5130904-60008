@@ -2,14 +2,12 @@
 #include <stdexcept>
 #include <cstdlib>
 
-constexpr int min_value = 2;
 constexpr int bad_input = 1;
 constexpr int range_error = 2;
 
-
-
 int main()
 {
+  const int min_value = 2;
   int max1 = 0;
   int max2 = 0;
   int num = 0;
