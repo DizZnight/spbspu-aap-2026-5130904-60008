@@ -2,6 +2,12 @@
 #include <stdexcept>
 #include <cstdlib>
 
+constexpr int min_value = 2;
+constexpr int bad_input = 1;
+constexpr int range_error = 2;
+
+
+
 int main()
 {
   int max1 = 0;
@@ -22,7 +28,7 @@ int main()
         max2 = max1;
         max1 = num;
       }
-      else if (num > max2 || size == 2)
+      else if (num > max2 || size == min_value)
       {
         max2 = num;
       }
@@ -31,7 +37,7 @@ int main()
     {
       throw std::invalid_argument("Invalid_argument");
     }
-    if (size < 2)
+    if (size < min_value)
     {
       throw std::out_of_range("Not_enough_values");
     }
@@ -39,12 +45,12 @@ int main()
   catch (const std::invalid_argument &ex)
   {
     std::cerr << ex.what() << "\n";
-    std::exit(1);
+    std::exit(bad_input);
   }
   catch (const std::out_of_range &ex)
   {
     std::cerr << ex.what() << "\n";
-    std::exit(2);
+    std::exit(range_error);
   }
   std::cout << max2 << "\n";
   return 0;
