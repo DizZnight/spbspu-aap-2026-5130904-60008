@@ -48,5 +48,5 @@ int main()
 
 bool hasSignChanged(int previous, int current)
 {
-  return ((previous < 0 && current > 0) || (previous > 0 && current < 0));
+  return (previous < 0 && current > 0) || (previous > 0 && current < 0);
 }
