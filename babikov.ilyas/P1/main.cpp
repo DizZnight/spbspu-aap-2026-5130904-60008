@@ -13,19 +13,15 @@ int main()
 
   try {
     while (true) {
-
       if (!(std::cin >> current)) {
-
         throw std::runtime_error("Некорректные входные данные");
       }
 
       if (current == 0) {
-
         break;
       }
 
       if (count > 0) {
-
         if ((current > 0 && previous < 0) || (current < 0 && previous > 0)) {
           ++ans;
         }
