@@ -1,5 +1,6 @@
 #include <iostream>
-int main() {
+int main() 
+{
   int a = 0;
   int num_of_elements = 0;
   int b = 0;
