@@ -12,7 +12,7 @@ int main()
       if (!(std::cin >> b)) {
          throw 1;
       }
-      if (b==0) {
+      if (b == 0) {
          std::cout << num_of_elements << "\n";
          return 0;
       } 
@@ -21,7 +21,7 @@ int main()
       if (!(std::cin >>a)) {
          throw 1;
       }
-      if (a==0) {
+      if (a == 0) {
          std::cout << num_of_elements << "\n";
          return 0;
       }
@@ -31,7 +31,7 @@ int main()
            if (!(std::cin >> c)) {
               throw 2;
       }
-      if (c==0) { 
+      if (c == 0) { 
          if (length<min_length) {
             throw 2;
          }
