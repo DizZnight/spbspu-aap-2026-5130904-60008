@@ -18,7 +18,7 @@ int main()
     {
       if (!(std::cin >> current))
       {
-        throw std::runtime_error("incorrect input data!");
+        throw std::runtime_error("incorrect input data");
       }
 
       if (current == 0)
