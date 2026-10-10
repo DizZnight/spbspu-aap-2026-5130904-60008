@@ -14,45 +14,54 @@ int main()
   int return_code = 0;
 
 
-  while(std::cin >> variable)
+  while (std::cin >> variable)
   {
-
-    try
+    if (variable == 0)
     {
-      if(!std::cin.eof() && std::cin.fail())
-      {
-        throw std::invalid_argument("Input error: not an int!");
-      }
-      if(total_count == 0)
-      {
-        throw std::range_error("Sequence is too short!");
-      }
+      break;
     }
 
-
-    catch(const std::invalid_argument& e)
+    if (total_count == 0)
     {
-      std::cerr << "Invalid argument!" << e.what() << "\n";
-      return_code = 1;
+      max_variable = variablel;
+      count_max_variable = 1;
+    }
+    else
+    {
+      func(variable, max_variable, count_max_variable);
     }
 
+    total_count++;
+  }
 
-    catch(const std::range_error& e)
+
+
+  try
+  {
+    if (!std::cin.eof() && std::cin.fail())
     {
-      std::cerr << "Range error!" << e.what() << "\n";
-      return_code = 2;
-      if(return_code == 0)
-      {
-        return_code = 2;
-      }
+      throw std::invalid_argument("Input error: not an int!");
+    }
+    if (total_count == 0)
+    {
+      throw std::range_error("Sequence is too short!");
     }
 
+    std::cout << "Count max variable: " << count_max_variable << "\n";
+  }
 
-    if(total_count > 0)
-    {
-      std::cout << "Max variable: " << max_variable << "\n";
-      std::cout << "Count max variable: " << count_max_variable << "\n";
-    }
+
+  catch (const std::invalid_argument& e)
+  {
+    std::cerr << "Invalid argument!" << e.what() << "\n";
+    return_code = 1;
+  }
+
+
+  catch (const std::range_error& e)
+  {
+    std::cerr << "Range error!" << e.what() << "\n";
+    return_code = 2;
   }
 
 
@@ -61,9 +70,9 @@ int main()
 
 
 
-void func(int variable, int &max_variable, int &count_max_variable)
+void func (int variable, int &max_variable, int &count_max_variable)
 {
-  if(variable > max_variable)
+  if (variable > max_variable)
   {
     max_variable = variable;
     count_max_variable = 1;
