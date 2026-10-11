@@ -1,9 +1,11 @@
 #include <iostream>
 #include <stdexcept>
 
-constexpr int INVALID_INPUT_ERROR = 1;
-
-bool hasSignChanged(int previous, int current);
+namespace bakoz
+{
+  constexpr int INVALID_INPUT_ERROR = 1;
+  bool hasSignChanged(int previous, int current);
+}
 
 int main()
 {
@@ -26,7 +28,7 @@ int main()
         break;
       }
 
-      if (has_previous && hasSignChanged(previous, current))
+      if (has_previous && bakoz::hasSignChanged(previous, current))
       {
         ++changed_signs;
       }
@@ -38,7 +40,7 @@ int main()
   catch (const std::runtime_error& ex)
   {
     std::cerr << ex.what() << "\n";
-    return INVALID_INPUT_ERROR;
+    return bakoz::INVALID_INPUT_ERROR;
   }
 
   std::cout << changed_signs << "\n";
@@ -46,7 +48,10 @@ int main()
   return 0;
 }
 
-bool hasSignChanged(int previous, int current)
+namespace bakoz
 {
-  return (previous < 0 && current > 0) || (previous > 0 && current < 0);
+  bool hasSignChanged(int previous, int current)
+  {
+    return (previous < 0 && current > 0) || (previous > 0 && current < 0);
+  }
 }
