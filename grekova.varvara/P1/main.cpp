@@ -1,6 +1,8 @@
 #include <iostream>
 
-int readInt();
+namespace grekova {
+  int readInt();
+}
 
 int main()
 {
@@ -10,7 +12,7 @@ int main()
     int prev = 0;
     int now = 0;
 
-    prev = readInt();
+    prev = grekova::readInt();
 
     if (prev == 0) {
       std::cout << "0\n";
@@ -18,7 +20,7 @@ int main()
     }
 
     while (true) {
-      now = readInt();
+      now = grekova::readInt();
 
       if (now == 0) {
         if (curr_len > max_len) {
@@ -50,7 +52,7 @@ int main()
   }
 }
 
-int readInt()
+int grekova::readInt()
 {
   const int invalid_input = 1;
 
