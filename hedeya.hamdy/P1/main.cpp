@@ -14,22 +14,35 @@ int main()
   int length = 1;
   int longest = 0;
 
-  while (std::cin >> current && current != 0)
+  try
   {
-    if (current == previous && previous != 0)
+    while (std::cin >> current && current != 0)
     {
-      length += 1;
-    }
-    else
-    {
-      length = 1;
+      if (current == previous && previous != 0)
+      {
+        length += 1;
+      }
+      else
+      {
+        length = 1;
+      }
+
+      longest = std::max(length, longest);
+      previous = current;
     }
 
-    longest = std::max(length, longest);
-    previous = current;
-  }
+    if (std::cin.fail()) {
+      throw std::runtime_error("Invalid input");
+    }
 
-  std::cout << longest;
+      std::cout << longest;
+    }
+
+  catch(const std::runtime_error& e)
+    {
+      std::cerr << e.what() << '\n';
+      return EXIT_FAILURE;
+    }
 
   return EXIT_SUCCESS;
 }
