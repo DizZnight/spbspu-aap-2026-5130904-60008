@@ -23,7 +23,7 @@ int main()
 
     if (total_count == 0)
     {
-      max_variable = variablel;
+      max_variable = variable;
       count_max_variable = 1;
     }
     else
