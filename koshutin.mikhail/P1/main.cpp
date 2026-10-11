@@ -1,8 +1,6 @@
 #include <iostream>
-
 namespace koshutin {
-
-int CountElements() {
+int countElements() {
   int a = 0;
   int num_of_elements = 0;
   int b = 0;
@@ -53,4 +51,4 @@ int CountElements() {
 
 } // namespace koshutin
 
-int main() { return koshutin::CountElements(); }
+int main() { return koshutin::countElements(); }
