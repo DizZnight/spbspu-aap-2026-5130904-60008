@@ -1,6 +1,6 @@
 #include <iostream>
-namespace koshutin
-{
+
+namespace koshutin {
 int countElements()
 {
   int a = 0;
@@ -12,7 +12,7 @@ int countElements()
     if (!(std::cin >> b)) {
       throw 1;
     }
-    if (b == 0) {
+    if (b==0) {
       std::cout << num_of_elements << "\n";
       return 0;
     }
@@ -43,15 +43,15 @@ int countElements()
     std::cout << num_of_elements << "\n";
   } catch (int thr) {
     if (thr == 1) {
-      std::cerr << "Invalid Input" << "\n";
+      std::cerr << "Invalid input" << "\n";
       return 1;
     }
   }
 
   return 0;
 }
-
 }
+
 int main()
 {
   return koshutin::countElements();
