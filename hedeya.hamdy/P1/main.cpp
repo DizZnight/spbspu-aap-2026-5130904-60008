@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
+#include <stdexcept>
 
 int main()
 {
@@ -31,18 +32,19 @@ int main()
       previous = current;
     }
 
-    if (std::cin.fail()) {
-      throw std::runtime_error("Invalid input");
-    }
-
-      std::cout << longest;
-    }
-
-  catch(const std::runtime_error& e)
+    if (std::cin.fail())
     {
-      std::cerr << e.what() << '\n';
-      return EXIT_FAILURE;
+      throw std::invalid_argument("Invalid input");
     }
+
+    std::cout << longest;
+  }
+
+  catch (const std::invalid_argument& e)
+  {
+    std::cerr << e.what() << '\n';
+    return EXIT_FAILURE;
+  }
 
   return EXIT_SUCCESS;
 }
