@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 
-void func(int variable, int &max_variable, int &count_max_variable);
+void func (int variable, int &max_variable, int &count_max_variable);
 
 
 int main()
@@ -35,7 +35,6 @@ int main()
   }
 
 
-
   try
   {
     if (!std::cin.eof() && std::cin.fail())
@@ -49,8 +48,8 @@ int main()
 
     std::cout << "Count max variable: " << count_max_variable << "\n";
   }
-
-
+  
+  
   catch (const std::invalid_argument& e)
   {
     std::cerr << "Invalid argument!" << e.what() << "\n";
@@ -77,7 +76,7 @@ void func (int variable, int &max_variable, int &count_max_variable)
     max_variable = variable;
     count_max_variable = 1;
   }
-  else if(variable == max_variable)
+  else if (variable == max_variable)
   {
     count_max_variable++;
   }
