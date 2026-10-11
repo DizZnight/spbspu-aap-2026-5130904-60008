@@ -4,46 +4,34 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
-#include <string>
-
-int getLengthOfLongestRepeatingSubstring(std::string string);
 
 int main()
 {
-  std::string string;
+  std::cout << "Enter an integer (0 to terminate):\n";
 
-  std::cout << "Enter a string of characters: \n";
-  std::getline(std::cin, string);
-
-  const int length = getLengthOfLongestRepeatingSubstring(string);
-  std::cout << "Length of longest repeating substring: " << length;
-
-  return EXIT_SUCCESS;
-}
-
-int getLengthOfLongestRepeatingSubstring(std::string string)
-{
-  int longest = 0;
-  int length = 0;
-  int current = 0;
   int previous = 0;
+  int current = 0;
+  int length = 1;
+  int longest = 0;
 
-  for (int i = 1; i < static_cast< int >(string.length()); i++)
+  while (std::cin >> current && current != 0)
   {
-    current = string[i];
-    previous = string[i - 1];
-
-    length += 1;
-
-    if (current != previous)
+    if (current == previous && previous != 0)
+    {
+      length += 1;
+    }
+    else
     {
       length = 1;
     }
 
     longest = std::max(length, longest);
+    previous = current;
   }
 
-  return longest;
+  std::cout << longest;
+
+  return EXIT_SUCCESS;
 }
 
 #endif
