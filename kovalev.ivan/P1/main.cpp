@@ -2,9 +2,11 @@
 #include <stdexcept>
 #include <cstdlib>
 
-constexpr int bad_input = 1;
-constexpr int range_error = 2;
-
+namespace kovalev
+{
+  constexpr int BAD_INPUT = 1;
+  constexpr int RANGE_ERROR = 2;
+}
 int main()
 {
   const int min_value = 2;
@@ -43,12 +45,12 @@ int main()
   catch (const std::invalid_argument &ex)
   {
     std::cerr << ex.what() << "\n";
-    std::exit(bad_input);
+    std::exit(kovalev::BAD_INPUT);
   }
   catch (const std::out_of_range &ex)
   {
     std::cerr << ex.what() << "\n";
-    std::exit(range_error);
+    std::exit(kovalev::RANGE_ERROR);
   }
   std::cout << max2 << "\n";
   return 0;
