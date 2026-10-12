@@ -1,7 +1,6 @@
 #include <iostream>
 
-namespace kiriukhin
-{
+namespace kiriukhin {
   constexpr int k_error_too_short = 2;
 
   int countMaxElements()
