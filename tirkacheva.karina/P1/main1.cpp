@@ -48,6 +48,7 @@ namespace tirkacheva {
 
     return count;
   }
+}
 
   int main()
   {
