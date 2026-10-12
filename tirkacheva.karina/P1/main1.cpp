@@ -50,16 +50,16 @@ namespace tirkacheva {
   }
 }
 
-  int main()
-  {
-    try {
-      std::cout << tirkacheva::countDivisible() << "\n";
-      return 0;
-    } catch (const std::invalid_argument &error) {
-      std::cerr << "Error: " << error.what() << "\n";
-      return 2;
-    } catch (const std::runtime_error &error) {
-      std::cerr << "Error: " << error.what() << "\n";
-      return 1;
-    }
+int main()
+{
+  try {
+    std::cout << tirkacheva::countDivisible() << "\n";
+    return 0;
+  } catch (const std::invalid_argument &error) {
+    std::cerr << "Error: " << error.what() << "\n";
+    return 2;
+  } catch (const std::runtime_error &error) {
+    std::cerr << "Error: " << error.what() << "\n";
+    return 1;
   }
+}
