@@ -9,8 +9,6 @@ int main()
   int ans = 0;
   int count = 0;
 
-  std::cout << "Введите числа (0 - конец):\n";
-
   try {
     while (true) {
       if (!(std::cin >> current)) {
@@ -33,11 +31,6 @@ int main()
   } catch (const std::exception &) {
     std::cerr << "Ошибка: неверные входные данные\n";
     return 1;
-  }
-
-  if (count < 2) {
-    std::cerr << "Ошибка: мало элементов\n";
-    return 2;
   }
 
   std::cout << ans << "\n";
