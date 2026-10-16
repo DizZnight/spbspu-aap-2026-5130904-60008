@@ -4,8 +4,7 @@
 
 namespace koltsov {
 
-int countIncreasingElements()
-{
+int countIncreasingElements() {
   int prev_num = 0;
   int curr_num = 0;
   int count = 0;
@@ -41,10 +40,9 @@ int countIncreasingElements()
   }
 }
 
-}
+} // namespace koltsov
 
-int main()
-{
+int main() {
   setlocale(LC_ALL, "ru_RU.UTF-8");
 
   int result = 0;
