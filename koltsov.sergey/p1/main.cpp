@@ -12,7 +12,7 @@ int countIncreasingElements()
     int count = 0;
 
     const int err_invalid_input = 1;
-    const std::string msg_invalid_input = "Входные данные не могут быть идентифицированы как последовательность.";
+    const std::string msg_invalid_input = "Не последовательность";
 
     if (!(std::cin >> prev_num))
     {
