@@ -11,38 +11,38 @@ namespace koltsov
     int count = 0;
 
     const int err_invalid_input = 1;
-    const std::string msg_invalid_input ="не последовательность";
+    const std::string msg_invalid_input = "не последовательность";
 
-  if (!(std::cin >> prev_num))
-  {
-    std::cerr << msg_invalid_input << "\n";
-    throw err_invalid_input;
-  }
-
-  if (prev_num == 0)
-  {
-    return 0;
-  }
-
-  while (true)
-  {
-    if (!(std::cin >> curr_num))
+    if (!(std::cin >> prev_num))
     {
-      std::cerr << msg_invalid_input <<"\n";
+      std::cerr << msg_invalid_input << "\n";
       throw err_invalid_input;
-     }
-
-    if (curr_num == 0)
-    {
-    return count;
     }
 
-    if (curr_num > prev_num)
+    if (prev_num == 0)
     {
-            count += 1;
+      return 0;
     }
 
-    prev_num = curr_num;
+    while (true)
+    {
+      if (!(std::cin >> curr_num))
+      {
+        std::cerr << msg_invalid_input << "\n";
+        throw err_invalid_input;
+      }
+
+      if (curr_num == 0)
+      {
+        return count;
+      }
+
+      if (curr_num > prev_num)
+      {
+        count += 1;
+      }
+
+      prev_num = curr_num;
     }
   }
 }
