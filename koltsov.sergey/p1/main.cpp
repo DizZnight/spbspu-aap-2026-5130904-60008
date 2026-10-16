@@ -5,47 +5,47 @@
 namespace koltsov
 {
 
-int countIncreasingElements()
-{
-    int prev_num = 0;
-    int curr_num = 0;
-    int count = 0;
-
-    const int err_invalid_input = 1;
-    const std::string msg_invalid_input = "Не последовательность";
-
-    if (!(std::cin >> prev_num))
+    int countIncreasingElements()
     {
-        std::cerr << msg_invalid_input << "\n";
-        throw err_invalid_input;
-    }
+        int prev_num = 0;
+        int curr_num = 0;
+        int count = 0;
 
-    if (prev_num == 0)
-    {
-        return 0;
-    }
+        const int err_invalid_input = 1;
+        const std::string msg_invalid_input = "Не последовательность";
 
-    while (true)
-    {
-        if (!(std::cin >> curr_num))
+        if (!(std::cin >> prev_num))
         {
             std::cerr << msg_invalid_input << "\n";
             throw err_invalid_input;
         }
 
-        if (curr_num == 0)
+        if (prev_num == 0)
         {
-            return count;
+            return 0;
         }
 
-        if (curr_num > prev_num)
+        while (true)
         {
-            count += 1;
-        }
+            if (!(std::cin >> curr_num))
+            {
+                std::cerr << msg_invalid_input << "\n";
+                throw err_invalid_input;
+            }
 
-        prev_num = curr_num;
+            if (curr_num == 0)
+            {
+                return count;
+            }
+
+            if (curr_num > prev_num)
+            {
+                count += 1;
+            }
+
+            prev_num = curr_num;
+        }
     }
-}
 
 }
 
@@ -60,7 +60,9 @@ int main()
         result = koltsov::countIncreasingElements();
         std::cout << result << "\n";
         return 0;
-    } catch (int error_code) {
+    }
+    catch (int error_code)
+    {
         return error_code;
     }
 }
