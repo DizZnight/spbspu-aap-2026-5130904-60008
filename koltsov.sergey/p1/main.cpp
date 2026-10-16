@@ -5,47 +5,49 @@
 namespace koltsov
 {
 
-    int countIncreasingElements()
+int countIncreasingElements()
+{
+    int prev_num = 0;
+    int curr_num = 0;
+    int count = 0;
+
+    const int err_invalid_input = 1;
+    const std::string msg_invalid_input =
+        "Входные данные не могут быть идентифицированы как "
+        "последовательность.";
+
+    if (!(std::cin >> prev_num))
     {
-        int prev_num = 0;
-        int curr_num = 0;
-        int count = 0;
+        std::cerr << msg_invalid_input << "\n";
+        throw err_invalid_input;
+    }
 
-        const int err_invalid_input = 1;
-        const std::string msg_invalid_input = "Не последовательность";
+    if (prev_num == 0)
+    {
+        return 0;
+    }
 
-        if (!(std::cin >> prev_num))
+    while (true)
+    {
+        if (!(std::cin >> curr_num))
         {
             std::cerr << msg_invalid_input << "\n";
             throw err_invalid_input;
         }
 
-        if (prev_num == 0)
+        if (curr_num == 0)
         {
-            return 0;
+            return count;
         }
 
-        while (true)
+        if (curr_num > prev_num)
         {
-            if (!(std::cin >> curr_num))
-            {
-                std::cerr << msg_invalid_input << "\n";
-                throw err_invalid_input;
-            }
-
-            if (curr_num == 0)
-            {
-                return count;
-            }
-
-            if (curr_num > prev_num)
-            {
-                count += 1;
-            }
-
-            prev_num = curr_num;
+            count += 1;
         }
+
+        prev_num = curr_num;
     }
+}
 
 }
 
