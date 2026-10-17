@@ -54,18 +54,20 @@ int main()
     {
       count_local_max_variable++;
     }
-
-
   }
-  catch (const std::runtime_error& ex)
-  {
-    std::cerr << ex.what() << "\n";
-    return bulgakov::INVALID_INPUT_ERROR;
+
+
+
   }
   catch (const std::range_error& ex)
   {
     std::cerr << ex.what() << "\n";
     return bulgakov::CALCULATION_ERROR;
+  }
+  catch (const std::runtime_error& ex)
+  {
+    std::cerr << ex.what() << "\n";
+    return bulgakov::INVALID_INPUT_ERROR;
   }
   catch (const std::length_error& ex)
   {
@@ -73,8 +75,6 @@ int main()
     return 2;
   }
 
-  std::cout << count_local_max_variable << "\n";
-  return 0;
 }
 
 
