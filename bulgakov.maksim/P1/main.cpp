@@ -3,12 +3,12 @@
 
 void exponent(int variable, int& local_max_variable, int& count_local_max_variable, int& last_trend);
 
+
 namespace bulgakov
 {
 constexpr int INVALID_INPUT_ERROR = 1;
 constexpr int CALCULATION_ERROR = 2;
 }
-
 
 
 int main()
@@ -57,8 +57,6 @@ int main()
   }
 
 
-
-  }
   catch (const std::range_error& ex)
   {
     std::cerr << ex.what() << "\n";
@@ -75,12 +73,15 @@ int main()
     return 2;
   }
 
+  std::cout << count_local_max_variable << "\n";
+  return 0;
 }
 
 
 
 void exponent(int variable, int& local_max_variable, int& count_local_max_variable, int& last_trend)
 {
+
   int current_trend = 0;
 
   if (variable > local_max_variable)
@@ -92,6 +93,7 @@ void exponent(int variable, int& local_max_variable, int& count_local_max_variab
     current_trend = -1;
   }
 
+
   if (current_trend != 0)
   {
     if (last_trend == 1 && current_trend == -1)
@@ -102,3 +104,4 @@ void exponent(int variable, int& local_max_variable, int& count_local_max_variab
   }
   local_max_variable = variable;
 }
+
