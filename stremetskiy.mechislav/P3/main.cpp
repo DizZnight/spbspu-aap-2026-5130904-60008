@@ -50,15 +50,14 @@ int main()
     stremetskiy::readRowAndCol(input, &row, &col);
     if (num == 1)
     {
-      int array[stremetskiy::SIZE_FIX]
-               [stremetskiy::SIZE_FIX] = {0};
+      int array[stremetskiy::SIZE_FIX][stremetskiy::SIZE_FIX] = {0};
       stremetskiy::fillArr(input, array[0], row, col);
 
       for (int i = 1; i < (row - 1); i++)
       {
         for (int j = 1; j < (col - 1); j++)
         {
-          int a = array[i][j];
+          const int a = array[i][j];
           if (a > array[i - 1][j] && a > array[i + 1][j])
           {
             if (a > array[i][j - 1] && a > array[i][j + 1])
@@ -77,7 +76,7 @@ int main()
       {
         for (int j = 1; j < (col - 1); j++)
         {
-          int a = array[i][j];
+          const int a = array[i][j];
           if (a > array[i - 1][j] && a > array[i + 1][j])
           {
             if (a > array[i][j - 1] && a > array[i][j + 1])
