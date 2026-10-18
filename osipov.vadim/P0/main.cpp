@@ -1,6 +1,6 @@
-#include <iostresam> 
+#include <iostream> 
 
-int(main)
+int main()
 {
   std::cout << "osipov.vadim";
   std::cout << "\n";
