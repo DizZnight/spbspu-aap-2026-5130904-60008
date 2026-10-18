@@ -158,7 +158,7 @@ void ajdarbekov::spiral(ajdarbekov::Matrix mat) {
       ++n;
     }
     ++top;
-    
+
     if (top <= bottom) {
       cursor = mat.start + (top * mat.col + right);
       for (int i = top; i <= bottom; ++i) {
