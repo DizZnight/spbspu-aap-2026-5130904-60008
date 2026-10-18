@@ -28,14 +28,14 @@ int main()
   int row = 0;
   int col = 0;
 
-  std::cout << "\nInput 3 values: num of variant, input and output files\n";
+  std::cout << "\nInput 3 val: num of var,input and output files\n";
   try
   {
     std::getline(std::cin, all_line);
     std::istringstream iss(all_line);
     if (!(iss >> num))
     {
-      throw std::invalid_argument("First parameter is not a number\n");
+      throw std::invalid_argument("First value is not a number\n");
     }
     if (!(iss >> input >> output))
     {
@@ -50,15 +50,18 @@ int main()
     stremetskiy::readRowAndCol(input, &row, &col);
     if (num == 1)
     {
-      int array[100][100] = {0};
+      int array[stremetskiy::SIZE_ARRSTAT]
+        [stremetskiy::SIZE_ARRSTAT] = {0};
       stremetskiy::fillArr(input, array[0], row, col);
 
       for (int i = 1; i < (row - 1); i++)
       {
         for (int j = 1; j < (col - 1); j++)
         {
-          if (array[i][j] > array[i - 1][j] && array[i][j] > array[i + 1][j] &&
-              array[i][j] > array[i][j - 1] && array[i][j] > array[i][j + 1])
+          if (array[i][j] > array[i - 1][j] &&
+              array[i][j] > array[i + 1][j] &&
+              array[i][j] > array[i][j - 1] &&
+              array[i][j] > array[i][j + 1])
           {
             count++;
           }
@@ -67,14 +70,16 @@ int main()
     }
     else if (num == 2)
     {
-      int * const * array = stremetskiy::fillArr(input, row, col);
+      int*const*const array = stremetskiy::fillArr(input, row, col);
 
       for (int i = 1; i < (row - 1); i++)
       {
         for (int j = 1; j < (col - 1); j++)
         {
-          if (array[i][j] > array[i - 1][j] && array[i][j] > array[i + 1][j] &&
-              array[i][j] > array[i][j - 1] && array[i][j] > array[i][j + 1])
+          if (array[i][j] > array[i - 1][j] &&
+              array[i][j] > array[i + 1][j] &&
+              array[i][j] > array[i][j - 1] &&
+              array[i][j] > array[i][j + 1])
           {
             count++;
           }
@@ -89,7 +94,7 @@ int main()
     }
     else
     {
-      throw std::invalid_argument("First parameter is out of range\n");
+      throw std::invalid_argument("First value is out of range\n");
     }
   }
   catch (const std::range_error &ex)
@@ -180,7 +185,7 @@ namespace stremetskiy
       in >> val;
       in >> val;
 
-      int **result_arr = new int *[row];
+      int ** const result_arr = new int *[row];
       for (int i = 0; i < row; i++)
       {
         result_arr[i] = new int[col];
