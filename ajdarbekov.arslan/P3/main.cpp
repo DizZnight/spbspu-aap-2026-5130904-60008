@@ -2,8 +2,8 @@
 #include <string>
 #include <fstream>
 #include <stdexcept>
-#include <cctype>   // ИСПРАВЛЕНО: добавлен для std::isdigit
-#include <cstdlib>  // ИСПРАВЛЕНО: добавлен для std::exit
+#include <cctype>
+#include <cstdlib>
 
 namespace ajdarbekov {
 
@@ -16,7 +16,6 @@ namespace ajdarbekov {
   const int ARG_EXIT_CODE = 1;
   const int MAT_EXIT_CODE = 2;
 
-  // ИСПРАВЛЕНО: Переименовано с matrix на Matrix по требованию стиля CamelCase
   struct Matrix {
     int line, col;
     int* start;
@@ -36,7 +35,6 @@ int main(int argc, char* argv[]) {
     return ajdarbekov::ARG_EXIT_CODE;
   }
 
-  // ИСПРАВЛЕНО: Добавлен const по требованию misc-const-correctness
   const std::string num_param = argv[1];
   int mode = 0;
 
@@ -46,7 +44,6 @@ int main(int argc, char* argv[]) {
     mode = 2;
   } else {
     bool is_numeric = true;
-    // ИСПРАВЛЕНО: Добавлен const для символа итератора c
     for (const char c : num_param) {
       if (!std::isdigit(c)) {
         is_numeric = false;
@@ -113,7 +110,6 @@ void ajdarbekov::inputdata(int mode, std::string fin, std::string fout) {
       continue;
     }
 
-    // ИСПРАВЛЕНО: Добавлен const по требованию линтера
     const int quan_elem = col * line;
     mat.line = line;
     mat.col = col;
