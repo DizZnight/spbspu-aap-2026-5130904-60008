@@ -12,6 +12,7 @@ namespace stremetskiy
   void writeResult(std::string, int);
   constexpr int INVALID_INPUT = 1;
   constexpr int INVALID_FILE = 2;
+  constexpr int SIZE_ARRSTAT = 100;
 }
 
 int main()
@@ -22,16 +23,16 @@ int main()
   std::string input = "";
   std::string output = "";
   std::string extra = "";
-  std::string allLine = "";
+  std::string all_line = "";
 
   int row = 0;
   int col = 0;
 
-  std::cout << "\nInput the 3 values: num of variant, input file and output file\n";
+  std::cout << "\nInput 3 values: num of variant, input and output files\n";
   try
   {
-    std::getline(std::cin, allLine);
-    std::istringstream iss(allLine);
+    std::getline(std::cin, all_line);
+    std::istringstream iss(all_line);
     if (!(iss >> num))
     {
       throw std::invalid_argument("First parameter is not a number\n");
@@ -56,7 +57,8 @@ int main()
       {
         for (int j = 1; j < (col - 1); j++)
         {
-          if (array[i][j] > array[i - 1][j] && array[i][j] > array[i + 1][j] && array[i][j] > array[i][j - 1] && array[i][j] > array[i][j + 1])
+          if (array[i][j] > array[i - 1][j] && array[i][j] > array[i + 1][j] &&
+              array[i][j] > array[i][j - 1] && array[i][j] > array[i][j + 1])
           {
             count++;
           }
@@ -65,13 +67,14 @@ int main()
     }
     else if (num == 2)
     {
-      int **array = stremetskiy::fillArr(input, row, col);
+      int * const * array = stremetskiy::fillArr(input, row, col);
 
       for (int i = 1; i < (row - 1); i++)
       {
         for (int j = 1; j < (col - 1); j++)
         {
-          if (array[i][j] > array[i - 1][j] && array[i][j] > array[i + 1][j] && array[i][j] > array[i][j - 1] && array[i][j] > array[i][j + 1])
+          if (array[i][j] > array[i - 1][j] && array[i][j] > array[i + 1][j] &&
+              array[i][j] > array[i][j - 1] && array[i][j] > array[i][j + 1])
           {
             count++;
           }
@@ -156,7 +159,7 @@ namespace stremetskiy
           {
             throw std::logic_error("Invalid file content\n");
           }
-          *(arr + i * 100 + j) = val;
+          *(arr + i * stremetskiy::SIZE_ARRSTAT + j) = val;
         }
       }
     }
