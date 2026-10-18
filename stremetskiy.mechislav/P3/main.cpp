@@ -51,7 +51,7 @@ int main()
     if (num == 1)
     {
       int array[stremetskiy::SIZE_ARRSTAT]
-        [stremetskiy::SIZE_ARRSTAT] = {0};
+               [stremetskiy::SIZE_ARRSTAT] = {0};
       stremetskiy::fillArr(input, array[0], row, col);
 
       for (int i = 1; i < (row - 1); i++)
@@ -70,7 +70,7 @@ int main()
     }
     else if (num == 2)
     {
-      int*const*const array = stremetskiy::fillArr(input, row, col);
+      int *const *const array = stremetskiy::fillArr(input, row, col);
 
       for (int i = 1; i < (row - 1); i++)
       {
@@ -185,7 +185,7 @@ namespace stremetskiy
       in >> val;
       in >> val;
 
-      int ** const result_arr = new int *[row];
+      int **const result_arr = new int *[row];
       for (int i = 0; i < row; i++)
       {
         result_arr[i] = new int[col];
@@ -224,4 +224,3 @@ namespace stremetskiy
     }
   }
 }
-
