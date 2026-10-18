@@ -8,7 +8,6 @@ int main()
     std::vector<int> posledovatelnoct;
     std::vector<int> otvet;
     int streak = 1;
-
     while (true) 
     {
         if (!(std::cin >> cifra)) 
@@ -20,7 +19,6 @@ int main()
         {
             break;
         }
-
         posledovatelnoct.push_back(cifra);
     }
     if (posledovatelnoct.empty()) 
@@ -28,14 +26,13 @@ int main()
         std::cout << 0 << "\n";
         return 0;
     }
-
     int i = 0;
     while (i < posledovatelnoct.size())
     {
         if ((i + 1) == posledovatelnoct.size())
         {
             otvet.push_back(streak);
-            std::cout << @id8251725 (*std)::max_element(otvet.begin(), otvet.end()) << std::endl;
+       	    std::cout << @id8251725 (*std)::max_element(otvet.begin(), otvet.end()) << std::endl;
             return 0;
         }
         if (posledovatelnoct[i] <= posledovatelnoct[i + 1])
@@ -50,6 +47,5 @@ int main()
             i++;
         }
     }
-
     return 0;
 }
