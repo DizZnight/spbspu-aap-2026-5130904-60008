@@ -58,10 +58,9 @@ int main()
       {
         for (int j = 1; j < (col - 1); j++)
         {
-          if (array[i][j] > array[i - 1][j] &&
-              array[i][j] > array[i + 1][j] &&
-              array[i][j] > array[i][j - 1] &&
-              array[i][j] > array[i][j + 1])
+          int a = array[i][j];
+          if (a > array[i - 1][j] && a > array[i + 1][j] &&
+              a > array[i][j - 1] && a > array[i][j + 1])
           {
             count++;
           }
@@ -76,10 +75,9 @@ int main()
       {
         for (int j = 1; j < (col - 1); j++)
         {
-          if (array[i][j] > array[i - 1][j] &&
-              array[i][j] > array[i + 1][j] &&
-              array[i][j] > array[i][j - 1] &&
-              array[i][j] > array[i][j + 1])
+          int a = array[i][j];
+          if (a > array[i - 1][j] && a > array[i + 1][j] &&
+              a > array[i][j - 1] && a > array[i][j + 1])
           {
             count++;
           }
