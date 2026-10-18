@@ -12,7 +12,7 @@ namespace stremetskiy
   void writeResult(std::string, int);
   constexpr int INVALID_INPUT = 1;
   constexpr int INVALID_FILE = 2;
-  constexpr int SIZE_ARRSTAT = 100;
+  constexpr int SIZE_FIX = 100;
 }
 
 int main()
@@ -50,8 +50,8 @@ int main()
     stremetskiy::readRowAndCol(input, &row, &col);
     if (num == 1)
     {
-      int array[stremetskiy::SIZE_ARRSTAT]
-               [stremetskiy::SIZE_ARRSTAT] = {0};
+      int array[stremetskiy::SIZE_FIX]
+               [stremetskiy::SIZE_FIX] = {0};
       stremetskiy::fillArr(input, array[0], row, col);
 
       for (int i = 1; i < (row - 1); i++)
@@ -59,10 +59,12 @@ int main()
         for (int j = 1; j < (col - 1); j++)
         {
           int a = array[i][j];
-          if (a > array[i - 1][j] && a > array[i + 1][j] &&
-              a > array[i][j - 1] && a > array[i][j + 1])
+          if (a > array[i - 1][j] && a > array[i + 1][j])
           {
-            count++;
+            if (a > array[i][j - 1] && a > array[i][j + 1])
+            {
+              count++;
+            }
           }
         }
       }
@@ -76,10 +78,12 @@ int main()
         for (int j = 1; j < (col - 1); j++)
         {
           int a = array[i][j];
-          if (a > array[i - 1][j] && a > array[i + 1][j] &&
-              a > array[i][j - 1] && a > array[i][j + 1])
+          if (a > array[i - 1][j] && a > array[i + 1][j])
           {
-            count++;
+            if (a > array[i][j - 1] && a > array[i][j + 1])
+            {
+              count++;
+            }
           }
         }
       }
@@ -162,7 +166,7 @@ namespace stremetskiy
           {
             throw std::logic_error("Invalid file content\n");
           }
-          *(arr + i * stremetskiy::SIZE_ARRSTAT + j) = val;
+          *(arr + i * stremetskiy::SIZE_FIX + j) = val;
         }
       }
     }
@@ -222,3 +226,4 @@ namespace stremetskiy
     }
   }
 }
+
