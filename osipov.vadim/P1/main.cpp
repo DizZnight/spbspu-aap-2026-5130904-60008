@@ -29,13 +29,13 @@ int main()
     return 0;
   }
 
-  int i = 0;
+  unsigned long i = 0;
   while (i < posledovatelnost.size())
   {
     if ((i + 1) == posledovatelnost.size())
     {
       otvet.push_back(streak);
-      std::cout << @id8251725 (*std)::max_element(otvet.begin(), otvet.end()) <<"n\";
+      std::cout << *max_element(otvet.begin(), otvet.end()) <<"n\";
       return 0;
     }
 
