@@ -35,7 +35,7 @@ int main()
     if ((i + 1) == posledovatelnost.size())
     {
       otvet.push_back(streak);
-      std::cout << *max_element(otvet.begin(), otvet.end()) <<"n\";
+      std::cout << *std::max_element(otvet.begin(), otvet.end()) << "\n";
       return 0;
     }
 
