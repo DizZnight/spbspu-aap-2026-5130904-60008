@@ -54,16 +54,30 @@ namespace hedeya
     void printMatrix(int rows, int columns, const std::vector<std::vector<int>>& matrix);
     void printMatrix(int rows, int columns, const int matrix[][MAX_COLS]);
 
-    void outputMatrixToFile(int rows, int columns, const std::vector<std::vector<int>>& matrix, std::ofstream& outputFile);
-    void outputMatrixToFile(int rows, int columns, const int matrix[][MAX_COLS], std::ofstream& outputFile);
+    void outputMatrixToFile(
+        Dimensions dimensions,
+        const std::vector<std::vector<int>>& matrix,
+        std::ofstream& outputFile);
+
+    void outputMatrixToFile(
+        Dimensions dimensions,
+        const int matrix[][MAX_COLS],
+        std::ofstream& outputFile);
 
     void fillMatrix(std::ifstream& inputFile, Dimensions& dimensions, std::vector<std::vector<int>> &matrix);
     void fillMatrix(std::ifstream& inputFile, Dimensions& dimensions, int (&matrix)[MAX_ROWS][MAX_COLS]);
 
     void subtractDifferenceFromElement(int &element, int i);
 
-    void iterateThroughMatrixSpiral(Dimensions dimensions, std::vector<std::vector<int>> &matrix, const std::function<void(int&, int)>& elementFunction);
-    void iterateThroughMatrixSpiral(Dimensions dimensions, int (&matrix)[MAX_ROWS][MAX_COLS], const std::function<void(int&, int)>& elementFunction);
+    void iterateThroughMatrixSpiral(
+        Dimensions dimensions,
+        std::vector<std::vector<int>> &matrix,
+        const std::function<void(int&, int)>& elementFunction);
+
+    void iterateThroughMatrixSpiral(
+        Dimensions dimensions,
+        int (&matrix)[MAX_ROWS][MAX_COLS],
+        const std::function<void(int&, int)>& elementFunction);
 
     Point getNextPosition(Direction direction, Point position)
     {
@@ -106,7 +120,10 @@ namespace hedeya
         }
     }
 
-    void outputMatrixToFile(Dimensions dimensions, const std::vector<std::vector<int>>& matrix, const std::string& outputFilePath)
+    void outputMatrixToFile(
+        Dimensions dimensions,
+        const std::vector<std::vector<int>>& matrix,
+        const std::string& outputFilePath)
     {
         std::ofstream outputFile(outputFilePath);
 
@@ -122,7 +139,10 @@ namespace hedeya
         }
     }
 
-    void outputMatrixToFile(Dimensions dimensions, const int matrix[][MAX_COLS], const std::string& outputFilePath)
+    void outputMatrixToFile(
+        Dimensions dimensions,
+        const int matrix[][MAX_COLS],
+        const std::string& outputFilePath)
     {
         std::ofstream outputFile(outputFilePath);
 
@@ -168,7 +188,10 @@ namespace hedeya
         element -= difference;
     }
 
-    void iterateThroughMatrixSpiral(Dimensions dimensions, std::vector<std::vector<int>> &matrix, const std::function<void(int&, int)>&& elementFunction)
+    void iterateThroughMatrixSpiral(
+        Dimensions dimensions,
+        std::vector<std::vector<int>> &matrix,
+        const std::function<void(int&, int)>&& elementFunction)
     {
         std::set<Point> seen = {};
 
@@ -188,7 +211,10 @@ namespace hedeya
             }
     }
 
-    void iterateThroughMatrixSpiral(Dimensions dimensions, int (&matrix)[MAX_ROWS][MAX_COLS], const std::function<void(int&, int)>& elementFunction)
+    void iterateThroughMatrixSpiral(
+        Dimensions dimensions,
+        int (&matrix)[MAX_ROWS][MAX_COLS],
+        const std::function<void(int&, int)>& elementFunction)
     {
         std::set<Point> seen = {};
 
@@ -250,7 +276,8 @@ int main(int argc, char* argv[])
             || dimensions.rows > hedeya::MAX_ROWS
             || dimensions.columns > hedeya::MAX_COLS)
             {
-                throw std::range_error("Number of elements, rows, or columns exceeds the allowed maximum, try using a dynamic array instead");
+                throw std::range_error(
+                "Number of elements, rows, or columns exceeds the allowed maximum.");
             }
 
             hedeya::fillMatrix(inputFile, dimensions, staticMatrix);
