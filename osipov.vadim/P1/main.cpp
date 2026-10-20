@@ -16,10 +16,12 @@ int main()
       std::cerr << "its not a number\n";
       return 1;
     }
+
     if (cifra == 0)
     {
       break;
     }
+
     posledovatelnost.push_back(cifra);
   }
 
@@ -51,5 +53,6 @@ int main()
       i++;
     }
   }
+
   return 0;
 }
