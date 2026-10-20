@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <vector>
+#include <set>
 
 enum Direction {
         UP,
@@ -23,21 +24,48 @@ struct Bounds {
 
 struct Point {
     int x, y;
+
+    bool operator<(const Point& other) const {
+        if (x != other.x) return x < other.x;
+        return y < other.y;
+    }
 };
 
-enum Direction getNextMovementDirection(Point currentPosition, Bounds bounds, Point previousPosition);
+Point getNextPosition(Direction direction, Point position);
+enum Direction getNextMovementDirection(Point currentPosition, Bounds bounds, const std::set<Point>& seen);
 void move(enum Direction direction, Point &position);
-int getNextPosition(Direction direction, Point position);
-void printMatrix(const std::vector<std::vector<int>>& matrix);
+void printMatrix(int rows, int columns, const std::vector<std::vector<int>>& matrix);
+void outputMatrixToFile(int rows, int columns, const std::vector<std::vector<int>>& matrix, std::ofstream& outputFile);
 
 int main(int argc, char* argv[])
 {
-    std::ifstream input(argv[1]);
+    if(argc < 3){
+        return EXIT_FAILURE;
+    }
 
-    int rows = 0, columns = 0;
+    int num = 2; //std::stoi(argv[1]);
+    if(num != 1 && num != 2){
+        return EXIT_FAILURE;
+    }
+
+    bool useDynamicArray = (num == 2);
+
+    std::string inputFilePath = "TestCase1.txt"; //argv[2];
+    std::string outputFilePath = "Output.txt"; //argv[3];
+
+    std::ifstream input(inputFilePath);
+
+    int rows = 0;
+    int columns = 0;
     input >> rows >> columns;
 
     std::vector<std::vector<int>> matrix(rows, std::vector<int>(columns, 0));
+
+    //if(useDynamicArray){
+    //    std::vector<std::vector<int>> matrix(rows, std::vector<int>(columns, 0));
+    //} else {
+    //    std::array<std::array<int, columns>, rows> matrix = {0};
+    //}
 
     for (int row = 0; row < rows; ++row){
         for (int column = 0; column < columns; ++column){
@@ -50,39 +78,60 @@ int main(int argc, char* argv[])
     Point position{bounds.left, bounds.bottom}; // x, y
     Point previousPosition{position.x, position.y}; // x, y
 
-    int count = 1;
+    std::set<Point> seen = {};
+
+    int difference = 1;
 
     for(int i = 0; i < rows * columns; ++i)
     {
-        matrix[position.y][position.x] -= count;
+        seen.insert(position);
+        matrix[position.y][position.x] -= difference;
 
-        enum Direction direction = getNextMovementDirection(position, bounds, previousPosition);
+        enum Direction direction = getNextMovementDirection(position, bounds, seen);
 
-        previousPosition = position;
         move(direction, position);
 
-        count += 1;
+        difference += 1;
     }
 
-    printMatrix(matrix);
+    printMatrix(rows, columns, matrix);
+
+    std::ofstream outputFile(outputFilePath);
+
+    if (!outputFile.is_open()) {
+        return EXIT_FAILURE;
+    }
+
+    outputMatrixToFile(rows, columns, matrix, outputFile);
 
     return EXIT_SUCCESS;
 }
 
-enum Direction getNextMovementDirection(Point currentPosition, Bounds bounds, Point previousPosition)
+Point getNextPosition(Direction direction, Point position)
+{
+    switch (direction) {
+        case UP:    return Point{position.x, position.y - 1};
+        case RIGHT: return Point{position.x + 1, position.y};
+        case DOWN:  return Point{position.x, position.y + 1};
+        case LEFT:  return Point{position.x - 1, position.y};
+    }
+    return position;
+}
+
+enum Direction getNextMovementDirection(Point currentPosition, Bounds bounds, const std::set<Point>& seen)
 {
     enum Direction direction = UP;
 
-    if(currentPosition.y > bounds.top && getNextPosition(UP, currentPosition) != previousPosition.y){
+    if(currentPosition.y != bounds.top && !seen.count(getNextPosition(UP, currentPosition))){
         direction = UP;
     }
-    else if(currentPosition.x < bounds.right && getNextPosition(RIGHT, currentPosition) != previousPosition.x){
+    else if(currentPosition.x != bounds.right && !seen.count(getNextPosition(RIGHT, currentPosition))){
         direction = RIGHT;
     }
-    else if(currentPosition.y < bounds.bottom && getNextPosition(DOWN, currentPosition) != previousPosition.y){
+    else if(currentPosition.y != bounds.bottom && !seen.count(getNextPosition(DOWN, currentPosition))){
         direction = DOWN;
     }
-    else if(currentPosition.x > bounds.left && getNextPosition(LEFT, currentPosition) != previousPosition.x){
+    else if(currentPosition.x != bounds.left && !seen.count(getNextPosition(LEFT, currentPosition))){
         direction = LEFT;
     }
 
@@ -99,21 +148,22 @@ void move(enum Direction direction, Point &position)
     }
 }
 
-int getNextPosition(Direction direction, Point position)
+void printMatrix(int rows, int columns, const std::vector<std::vector<int>>& matrix)
 {
-    switch (direction) {
-        case UP:    return position.y - 1;
-        case RIGHT: return position.x + 1;
-        case DOWN:  return position.y + 1;
-        case LEFT:  return position.x - 1;
+    std::cout << rows << " " << columns << " ";
+    for (const std::vector<int>& row : matrix) {
+        for (const int element : row) {
+            std::cout << element << " ";
+        }
     }
 }
 
-void printMatrix(const std::vector<std::vector<int>>& matrix)
+void outputMatrixToFile(int rows, int columns, const std::vector<std::vector<int>>& matrix, std::ofstream& outputFile)
 {
+    outputFile << rows << " " << columns << " ";
     for (const std::vector<int>& row : matrix) {
         for (const int element : row) {
-            std::cout << element << "\n";
+            outputFile << element << " ";
         }
     }
 }
