@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <cctype>
 #include <cstdlib>
+#include <new>
 
 namespace ajdarbekov
 {
@@ -17,13 +18,17 @@ namespace ajdarbekov
   const int ARG_EXIT_CODE = 1;
   const int MAT_EXIT_CODE = 2;
 
+  const int BUFFER = 10000;
+  const int INT_MAX_LIMIT = 2147483647;
+
   struct Matrix
   {
     int line, col;
     int *start;
   };
 
-  void inputdata(int mode, std::string fin, std::string fout);
+  void inputdata_static(std::ifstream &infile, std::ofstream &outfile);
+  void inputdata_dynamic(std::ifstream &infile, std::ofstream &outfile);
   void spiral(Matrix mat);
 }
 
@@ -73,32 +78,43 @@ int main(int argc, char *argv[])
     return ajdarbekov::ARG_EXIT_CODE;
   }
 
+  std::ifstream infile(argv[2]);
+  std::ofstream outfile(argv[3]);
+  if (!infile.is_open() or !outfile.is_open())
+  {
+    std::cerr << ajdarbekov::INCOR_FILE_NAME;
+    return ajdarbekov::ARG_EXIT_CODE;
+  }
+
   try
   {
-    ajdarbekov::inputdata(mode, argv[2], argv[3]);
+    if (mode == 1)
+    {
+      ajdarbekov::inputdata_static(infile, outfile);
+    }
+    else
+    {
+      ajdarbekov::inputdata_dynamic(infile, outfile);
+    }
   }
   catch (const std::invalid_argument &ex)
   {
     std::cerr << ex.what();
     return ajdarbekov::MAT_EXIT_CODE;
   }
+  catch (const std::bad_alloc &)
+  {
+    std::cerr << "Allocation failed: Matrix is too big for memory";
+    return ajdarbekov::MAT_EXIT_CODE;
+  }
 
   return 0;
 }
 
-void ajdarbekov::inputdata(int mode, std::string fin, std::string fout)
+void ajdarbekov::inputdata_static(std::ifstream &infile, std::ofstream &outfile)
 {
-  std::ifstream infile(fin);
-  std::ofstream outfile(fout);
-  if (!infile.is_open() or !outfile.is_open())
-  {
-    std::cerr << ajdarbekov::INCOR_FILE_NAME;
-    std::exit(ajdarbekov::ARG_EXIT_CODE);
-  }
-
+  int arr[ajdarbekov::BUFFER];
   int line = 0, col = 0;
-  const int BUFFER = 10000;
-  int arr[BUFFER];
   bool has_matrices = false;
   ajdarbekov::Matrix mat{0, 0, nullptr};
 
@@ -113,13 +129,7 @@ void ajdarbekov::inputdata(int mode, std::string fin, std::string fout)
       }
       break;
     }
-
-    if (infile.fail())
-    {
-      throw std::invalid_argument(ajdarbekov::NOT_MAT_IN_FILE);
-    }
-
-    if (!(infile >> col))
+    if (infile.fail() or !(infile >> col))
     {
       throw std::invalid_argument(ajdarbekov::NOT_MAT_IN_FILE);
     }
@@ -130,38 +140,90 @@ void ajdarbekov::inputdata(int mode, std::string fin, std::string fout)
     {
       throw std::invalid_argument(ajdarbekov::NOT_MAT_IN_FILE);
     }
-
     if (line == 0 and col == 0)
     {
       outfile << line << " " << col << "\n";
       continue;
     }
 
+    if (col != 0 and line > ajdarbekov::BUFFER / col)
+    {
+      throw std::invalid_argument(ajdarbekov::NOT_MAT_IN_FILE);
+    }
+
     const int quan_elem = col * line;
     mat.line = line;
     mat.col = col;
-
-    if (mode == 1)
-    {
-      if (quan_elem > BUFFER)
-      {
-        throw std::invalid_argument(ajdarbekov::NOT_MAT_IN_FILE);
-      }
-      mat.start = arr;
-    }
-    else
-    {
-      mat.start = new int[quan_elem];
-    }
+    mat.start = arr;
 
     for (int i = 0; i < quan_elem; ++i)
     {
       if (!(infile >> mat.start[i]))
       {
-        if (mode == 2)
-        {
-          delete[] mat.start;
-        }
+        throw std::invalid_argument(ajdarbekov::NOT_MAT_IN_FILE);
+      }
+    }
+
+    ajdarbekov::spiral(mat);
+
+    outfile << line << " " << col;
+    for (int i = 0; i < quan_elem; ++i)
+    {
+      outfile << " " << mat.start[i];
+    }
+    outfile << "\n";
+  }
+}
+
+void ajdarbekov::inputdata_dynamic(std::ifstream &infile, std::ofstream &outfile)
+{
+  int line = 0, col = 0;
+  bool has_matrices = false;
+  ajdarbekov::Matrix mat{0, 0, nullptr};
+
+  while (true)
+  {
+    infile >> line;
+    if (infile.eof())
+    {
+      if (!has_matrices)
+      {
+        throw std::invalid_argument(ajdarbekov::NOT_MAT_IN_FILE);
+      }
+      break;
+    }
+    if (infile.fail() or !(infile >> col))
+    {
+      throw std::invalid_argument(ajdarbekov::NOT_MAT_IN_FILE);
+    }
+
+    has_matrices = true;
+
+    if (line < 0 or col < 0)
+    {
+      throw std::invalid_argument(ajdarbekov::NOT_MAT_IN_FILE);
+    }
+    if (line == 0 and col == 0)
+    {
+      outfile << line << " " << col << "\n";
+      continue;
+    }
+
+    if (col != 0 and line > ajdarbekov::INT_MAX_LIMIT / col)
+    {
+      throw std::invalid_argument(ajdarbekov::NOT_MAT_IN_FILE);
+    }
+
+    const int quan_elem = col * line;
+    mat.line = line;
+    mat.col = col;
+    mat.start = new int[quan_elem];
+
+    for (int i = 0; i < quan_elem; ++i)
+    {
+      if (!(infile >> mat.start[i]))
+      {
+        delete[] mat.start;
         throw std::invalid_argument(ajdarbekov::NOT_MAT_IN_FILE);
       }
     }
@@ -175,10 +237,7 @@ void ajdarbekov::inputdata(int mode, std::string fin, std::string fout)
     }
     outfile << "\n";
 
-    if (mode == 2)
-    {
-      delete[] mat.start;
-    }
+    delete[] mat.start;
   }
 }
 
