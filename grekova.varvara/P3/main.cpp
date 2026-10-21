@@ -11,28 +11,31 @@ const int EXIT_ARGS_ERROR = 1;
 const int EXIT_FILE_ERROR = 2;
 const int EXIT_MATRIX_ERROR = 2;
 const int MAX_SIZE_ARR = 10000;
+const std::string INC_NUM_OF_ARG = "Incorrect number of arguments";
+const std::string INC_NUM = "Incorrect task number";
+const std::string INV_VAL = "Invalid matrix data";
 
 int readMatrix(const std::string &filename, int mode, int **&matrix, int &rows,
-               int &cols, int *&staticStorage);
+               int &cols, int *&static_storage);
 void processSpiral(int **matrix, int rows, int cols);
 bool readInt(std::ifstream &in, int &val);
 void writeMatrixToFile(const std::string &filename, int **matrix, int rows,
                        int cols);
-}
+} 
 
 int main(int argc, char *argv[])
 {
   if (argc < 4) {
-    std::cerr << "Not enough arguments.\n";
+    std::cerr << grekova::INC_NUM_OF_ARG  << "\n";
     return grekova::EXIT_ARGS_ERROR;
   }
 
   if (argc > 4) {
-    std::cerr << "Too many arguments.\n";
+    std::cerr << grekova::INC_NUM_OF_ARG << "\n";
     return grekova::EXIT_ARGS_ERROR;
   }
 
-  std::string num = argv[1];
+  const std::string num = argv[1];
 
   if (num != "1" && num != "2") {
     bool is_numeric = true;
@@ -44,24 +47,24 @@ int main(int argc, char *argv[])
     }
 
     if (is_numeric) {
-      std::cerr << "First parameter is out of range.\n";
+      std::cerr << grekova::INC_NUM << "\n";
       return grekova::EXIT_ARGS_ERROR;
     } else {
-      std::cerr << "First parameter is not a number.\n";
+      std::cerr << grekova::INC_NUM << "\n";
       return grekova::EXIT_ARGS_ERROR;
     }
   }
 
-  int mode = (num == "1") ? 1 : 2;
+  const int mode = (num == "1") ? 1 : 2;
 
   int **matrix = nullptr;
-  int *staticStorage = nullptr;
+  int *static_storage = nullptr;
   int rows = 0, cols = 0;
 
-  int readStatus =
-      grekova::readMatrix(argv[2], mode, matrix, rows, cols, staticStorage);
-  if (readStatus != grekova::EXIT_SUCCESS_CODE) {
-    return readStatus;
+  const int read_status =
+      grekova::readMatrix(argv[2], mode, matrix, rows, cols, static_storage);
+  if (read_status != grekova::EXIT_SUCCESS_CODE) {
+    return read_status;
   }
 
   if (rows == 0 && cols == 0) {
@@ -75,10 +78,8 @@ int main(int argc, char *argv[])
 
   if (mode == 1) {
     delete[] matrix;
-    delete[] staticStorage;
+    delete[] static_storage;
   } else {
-    for (int i = 0; i < rows; ++i)
-      delete matrix[i];
     delete[] matrix;
   }
 
@@ -90,20 +91,20 @@ bool grekova::readInt(std::ifstream &in, int &val) {
 }
 
 int grekova::readMatrix(const std::string &filename, int mode, int **&matrix,
-                        int &rows, int &cols, int *&staticStorage) {
+                        int &rows, int &cols, int *&static_storage) {
   std::ifstream fin(filename);
   if (!fin.is_open()) {
-    std::cerr << "Cannot open input file.\n";
+    std::cerr << grekova::INV_VAL << "\n";
     return EXIT_MATRIX_ERROR;
   }
 
   if (!readInt(fin, rows) || !readInt(fin, cols)) {
-    std::cerr << "Invalid matrix input or empty file.\n";
+    std::cerr << grekova::INV_VAL << "\n";
     return EXIT_MATRIX_ERROR;
   }
 
   if (rows < 0 || cols < 0) {
-    std::cerr << "Invalid matrix dimensions.\n";
+    std::cerr << grekova::INV_VAL << "\n";
     return EXIT_MATRIX_ERROR;
   }
 
@@ -114,24 +115,24 @@ int grekova::readMatrix(const std::string &filename, int mode, int **&matrix,
 
   if (mode == 1) {
     if (rows * cols > MAX_SIZE_ARR) {
-      std::cerr << "Matrix is too large for static array.\n";
+      std::cerr << grekova::INV_VAL << "\n";
       return EXIT_MATRIX_ERROR;
     }
 
-    staticStorage = new int[grekova::MAX_SIZE_ARR];
+    static_storage = new int[grekova::MAX_SIZE_ARR];
     matrix = new int *[rows];
 
     int idx = 0, val = 0;
     for (int i = 0; i < rows; ++i) {
-      matrix[i] = &staticStorage[i * cols];
+      matrix[i] = &static_storage[i * cols];
       for (int j = 0; j < cols; ++j) {
         if (!readInt(fin, val)) {
-          std::cerr << "Not enough elements in matrix.\n";
-          delete[] staticStorage;
+          std::cerr << grekova::INV_VAL << "\n";
+          delete[] static_storage;
           delete[] matrix;
           return EXIT_MATRIX_ERROR;
         }
-        staticStorage[idx++] = val;
+        static_storage[idx++] = val;
       }
     }
   } else {
@@ -141,7 +142,7 @@ int grekova::readMatrix(const std::string &filename, int mode, int **&matrix,
         matrix[i] = new int[cols];
       }
     } catch (const std::bad_alloc &e) {
-      std::cerr << "Memory allocation failed.\n";
+      std::cerr << grekova::INV_VAL << "\n";
       if (matrix) {
         for (int i = 0; i < rows; ++i)
           delete[] matrix[i];
@@ -154,7 +155,7 @@ int grekova::readMatrix(const std::string &filename, int mode, int **&matrix,
     for (int i = 0; i < rows; ++i) {
       for (int j = 0; j < cols; ++j) {
         if (!readInt(fin, val)) {
-          std::cerr << "Not enough elements in matrix.\n";
+          std::cerr << grekova::INV_VAL << "\n";
           for (int k = 0; k < rows; ++k)
             delete[] matrix[k];
           delete[] matrix;
@@ -201,7 +202,7 @@ void grekova::writeMatrixToFile(const std::string &filename, int **matrix,
                                 int rows, int cols) {
   std::ofstream fout(filename);
   if (!fout.is_open()) {
-    std::cerr << "Cannot open output file.\n";
+    std::cerr << grekova::INV_VAL << "\n";
     return;
   }
 
