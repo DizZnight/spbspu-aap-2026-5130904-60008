@@ -21,12 +21,12 @@ void processSpiral(int **matrix, int rows, int cols);
 bool readInt(std::ifstream &in, int &val);
 void writeMatrixToFile(const std::string &filename, int **matrix, int rows,
                        int cols);
-} 
+}
 
 int main(int argc, char *argv[])
 {
   if (argc < 4) {
-    std::cerr << grekova::INC_NUM_OF_ARG  << "\n";
+    std::cerr << grekova::INC_NUM_OF_ARG << "\n";
     return grekova::EXIT_ARGS_ERROR;
   }
 
