@@ -27,8 +27,8 @@ namespace ajdarbekov
     int *start;
   };
 
-  void inputdata_static(std::ifstream &infile, std::ofstream &outfile);
-  void inputdata_dynamic(std::ifstream &infile, std::ofstream &outfile);
+  void inputdataStatic(std::ifstream &infile, std::ofstream &outfile);
+  void inputdataDynamic(std::ifstream &infile, std::ofstream &outfile);
   void spiral(Matrix mat);
 }
 
@@ -90,11 +90,11 @@ int main(int argc, char *argv[])
   {
     if (mode == 1)
     {
-      ajdarbekov::inputdata_static(infile, outfile);
+      ajdarbekov::inputdataStatic(infile, outfile);
     }
     else
     {
-      ajdarbekov::inputdata_dynamic(infile, outfile);
+      ajdarbekov::inputdataDynamic(infile, outfile);
     }
   }
   catch (const std::invalid_argument &ex)
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
   return 0;
 }
 
-void ajdarbekov::inputdata_static(std::ifstream &infile, std::ofstream &outfile)
+void ajdarbekov::inputdataStatic(std::ifstream &infile, std::ofstream &outfile)
 {
   int arr[ajdarbekov::BUFFER];
   int line = 0, col = 0;
@@ -175,7 +175,7 @@ void ajdarbekov::inputdata_static(std::ifstream &infile, std::ofstream &outfile)
   }
 }
 
-void ajdarbekov::inputdata_dynamic(std::ifstream &infile, std::ofstream &outfile)
+void ajdarbekov::inputdataDynamic(std::ifstream &infile, std::ofstream &outfile)
 {
   int line = 0, col = 0;
   bool has_matrices = false;
