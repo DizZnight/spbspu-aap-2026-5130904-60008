@@ -15,40 +15,35 @@ namespace stremetskiy
   constexpr int SIZE_FIX = 100;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-  int num = 0;
   int count = 0;
+  int variant = 0;
 
   std::string input = "";
   std::string output = "";
-  std::string extra = "";
-  std::string all_line = "";
 
   int row = 0;
   int col = 0;
 
-  std::cout << "\nInput 3 val: num of var,input and output files\n";
   try
   {
-    std::getline(std::cin, all_line);
-    std::istringstream iss(all_line);
-    if (!(iss >> num))
-    {
-      throw std::invalid_argument("First value is not a number\n");
-    }
-    if (!(iss >> input >> output))
+    if (argc < 4)
     {
       throw std::range_error("Not enough arguments\n");
     }
 
-    if (iss >> extra)
+    if (argc > 4)
     {
       throw std::range_error("too many arguments\n");
     }
 
+    variant = std::stoi(argv[1]);
+    input = argv[2];
+    output = argv[3];
+
     stremetskiy::readRowAndCol(input, &row, &col);
-    if (num == 1)
+    if (variant == 1)
     {
       int array[stremetskiy::SIZE_FIX][stremetskiy::SIZE_FIX] = {0};
       stremetskiy::fillArr(input, array[0], row, col);
@@ -68,7 +63,7 @@ int main()
         }
       }
     }
-    else if (num == 2)
+    else if (variant == 2)
     {
       int *const *const array = stremetskiy::fillArr(input, row, col);
 
@@ -95,7 +90,7 @@ int main()
     }
     else
     {
-      throw std::invalid_argument("First value is out of range\n");
+      throw std::range_error("First value is out of range\n");
     }
   }
   catch (const std::range_error &ex)
@@ -105,7 +100,7 @@ int main()
   }
   catch (const std::invalid_argument &ex)
   {
-    std::cerr << "Invalid input: " << ex.what();
+    std::cerr << "Invalid input: First value is not a num \n";
     return stremetskiy::INVALID_INPUT;
   }
   catch (const std::logic_error &ex)
@@ -198,6 +193,11 @@ namespace stremetskiy
         {
           if (!(in >> val))
           {
+            for (int k = 0; k <= i; k++)
+            {
+              delete[] result_arr[k];
+            }
+            delete[] result_arr;
             throw std::logic_error("Invalid file content\n");
           }
           result_arr[i][j] = val;
@@ -225,4 +225,3 @@ namespace stremetskiy
     }
   }
 }
-
