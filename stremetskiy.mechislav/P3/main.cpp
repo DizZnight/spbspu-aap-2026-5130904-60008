@@ -2,7 +2,6 @@
 #include <stdexcept>
 #include <fstream>
 #include <string>
-#include <sstream>
 
 namespace stremetskiy
 {
