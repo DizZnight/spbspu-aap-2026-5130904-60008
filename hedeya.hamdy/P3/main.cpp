@@ -71,28 +71,28 @@ namespace hedeya {
             && (position.y <= bounds.bottom));
   }
 
-  Direction getNextMovementDirection(Point currentPosition, Direction lastMovementDirection, Bounds bounds,
-                                     const std::set< Point >& seen)
+  Direction getNextMovementDirection(Point current_position, Direction last_movement_direction,
+                                     Bounds bounds, const std::set< Point >& seen)
   {
     Direction direction = UP;
 
-    Point nextPositionLast = getNextPosition(lastMovementDirection, currentPosition);
-    Point nextPositionUp = getNextPosition(UP, currentPosition);
-    Point nextPositionDown = getNextPosition(DOWN, currentPosition);
-    Point nextPositionLeft = getNextPosition(LEFT, currentPosition);
-    Point nextPositionRight = getNextPosition(RIGHT, currentPosition);
+    Point next_position_last = getNextPosition(last_movement_direction, current_position);
+    Point next_position_up = getNextPosition(UP, current_position);
+    Point next_position_down = getNextPosition(DOWN, current_position);
+    Point next_position_left = getNextPosition(LEFT, current_position);
+    Point next_position_right = getNextPosition(RIGHT, current_position);
 
-    if (!seen.count(nextPositionLast) && isInBounds(nextPositionLast, bounds)) {
-      return lastMovementDirection;
+    if (!seen.count(next_position_last) && isInBounds(next_position_last, bounds)) {
+      return last_movement_direction;
     }
 
-    if (isInBounds(nextPositionUp, bounds) && !seen.count(nextPositionUp)) {
+    if (isInBounds(next_position_up, bounds) && !seen.count(next_position_up)) {
       direction = UP;
-    } else if (isInBounds(nextPositionRight, bounds) && !seen.count(nextPositionRight)) {
+    } else if (isInBounds(next_position_right, bounds) && !seen.count(next_position_right)) {
       direction = RIGHT;
-    } else if (isInBounds(nextPositionDown, bounds) && !seen.count(nextPositionDown)) {
+    } else if (isInBounds(next_position_down, bounds) && !seen.count(next_position_down)) {
       direction = DOWN;
-    } else if (isInBounds(nextPositionLeft, bounds) && !seen.count(nextPositionLeft)) {
+    } else if (isInBounds(next_position_left, bounds) && !seen.count(next_position_left)) {
       direction = LEFT;
     }
 
@@ -122,100 +122,101 @@ namespace hedeya {
     element -= i + 1;
   }
 
-  void rejectExtraData(std::ifstream& inputFile)
+  void rejectExtraData(std::ifstream& input_file)
   {
     std::string extra;
-    if (inputFile >> extra) {
+    if (input_file >> extra) {
       throw invalid_matrix_error("Extra data after matrix");
     }
   }
 
-  void fillMatrix(std::ifstream& inputFile, Dimensions dimensions, std::vector< int >& matrix)
+  void fillMatrix(std::ifstream& input_file, Dimensions dimensions, std::vector< int >& matrix)
   {
     for (int row = 0; row < dimensions.rows; ++row) {
       for (int column = 0; column < dimensions.columns; ++column) {
         const std::size_t index = (row * dimensions.columns) + column;
 
-        if (!(inputFile >> matrix[index])) {
+        if (!(input_file >> matrix[index])) {
           throw invalid_matrix_error("Number of rows/columns does not match the number of elements in the input");
         }
       }
     }
   }
 
-  void fillMatrix(std::ifstream& inputFile, Dimensions dimensions, int* matrix)
+  void fillMatrix(std::ifstream& input_file, Dimensions dimensions, int* matrix)
   {
     for (int row = 0; row < dimensions.rows; ++row) {
       for (int column = 0; column < dimensions.columns; ++column) {
         const std::size_t index = (row * dimensions.columns) + column;
 
-        if (!(inputFile >> matrix[index])) {
+        if (!(input_file >> matrix[index])) {
           throw invalid_matrix_error("Number of rows/columns does not match the number of elements in the input");
         }
       }
     }
   }
 
-  void outputMatrixToFile(Dimensions dimensions, const std::vector< int >& matrix, const std::string& outputFilePath)
+  void outputMatrixToFile(Dimensions dimensions, const std::vector< int >& matrix,
+                          const std::string& output_file_path)
   {
-    std::ofstream outputFile(outputFilePath);
+    std::ofstream output_file(output_file_path);
 
-    if (!outputFile.is_open()) {
+    if (!output_file.is_open()) {
       throw std::runtime_error("Output file failed to open");
     }
 
-    outputFile << dimensions.rows << " " << dimensions.columns << " ";
+    output_file << dimensions.rows << " " << dimensions.columns << " ";
 
     for (int row = 0; row < dimensions.rows; ++row) {
       for (int column = 0; column < dimensions.columns; ++column) {
         const std::size_t index = row * dimensions.columns + column;
 
-        outputFile << matrix[index] << " ";
+        output_file << matrix[index] << " ";
       }
     }
   }
 
-  void outputMatrixToFile(Dimensions dimensions, const int* matrix, const std::string& outputFilePath)
+  void outputMatrixToFile(Dimensions dimensions, const int* matrix, const std::string& output_file_path)
   {
-    std::ofstream outputFile(outputFilePath);
+    std::ofstream output_file(output_file_path);
 
-    if (!outputFile.is_open()) {
+    if (!output_file.is_open()) {
       throw std::runtime_error("Output file failed to open");
     }
 
-    outputFile << dimensions.rows << " " << dimensions.columns << " ";
+    output_file << dimensions.rows << " " << dimensions.columns << " ";
 
     for (int row = 0; row < dimensions.rows; ++row) {
       for (int column = 0; column < dimensions.columns; ++column) {
         const std::size_t index = (row * dimensions.columns) + column;
 
-        outputFile << matrix[index] << " ";
+        output_file << matrix[index] << " ";
       }
     }
   }
 
   void iterateThroughMatrixSpiral(Dimensions dimensions, int* matrix,
-                                  const std::function< void(int&, std::size_t) >& elementFunction)
+                                  const std::function< void(int&, std::size_t) >& element_function)
   {
     std::set< Point > seen = {};
 
     Bounds bounds{0, dimensions.rows - 1, 0, dimensions.columns - 1};
     Point position{bounds.left, bounds.bottom};
 
-    const std::size_t totalElements = dimensions.rows * dimensions.columns;
+    const std::size_t total_elements = dimensions.rows * dimensions.columns;
 
-    Direction lastMovementDirection = UP;
+    Direction last_movement_direction = UP;
 
-    for (std::size_t i = 0; i < totalElements; ++i) {
+    for (std::size_t i = 0; i < total_elements; ++i) {
       seen.insert(position);
 
       const std::size_t index = (position.y * dimensions.columns) + position.x;
 
       int& element = matrix[index];
-      elementFunction(element, i);
+      element_function(element, i);
 
-      Direction direction = getNextMovementDirection(position, lastMovementDirection, bounds, seen);
-      lastMovementDirection = direction;
+      Direction direction = getNextMovementDirection(position, last_movement_direction, bounds, seen);
+      last_movement_direction = direction;
 
       move(direction, position);
     }
@@ -232,35 +233,35 @@ int main(int argc, char* argv[])
       throw std::invalid_argument("Too many arguments");
     }
 
-    int NUM_ARG = 0;
+    int num_arg = 0;
 
     try {
-      std::size_t endPosition = 0;
+      std::size_t end_position = 0;
 
-      NUM_ARG = std::stoi(argv[1], &endPosition);
-      if (endPosition != std::string(argv[1]).length()) {
+      num_arg = std::stoi(argv[1], &end_position);
+      if (end_position != std::string(argv[1]).length()) {
         throw std::invalid_argument("First parameter is not a number");
       }
     } catch (const std::invalid_argument&) {
       throw std::invalid_argument("First parameter is not a number");
     }
 
-    if (NUM_ARG > 2 || NUM_ARG < 1) {
+    if (num_arg > 2 || num_arg < 1) {
       throw std::invalid_argument("First parameter is out of range");
     }
 
-    const bool USE_DYNAMIC_ARRAY = (NUM_ARG == 2);
+    const bool USE_DYNAMIC_ARRAY = (num_arg == 2);
 
     const std::string INPUT_FILE_PATH = argv[2];
     const std::string OUTPUT_FILE_PATH = argv[3];
 
-    std::ifstream inputFile(INPUT_FILE_PATH);
-    if (!inputFile.is_open()) {
+    std::ifstream input_file(INPUT_FILE_PATH);
+    if (!input_file.is_open()) {
       throw hedeya::invalid_matrix_error("Input file failed to open");
     }
 
     hedeya::Dimensions dimensions{0, 0};
-    if (!(inputFile >> dimensions.rows >> dimensions.columns)) {
+    if (!(input_file >> dimensions.rows >> dimensions.columns)) {
       throw hedeya::invalid_matrix_error("Number of rows/columns is not a valid number");
     }
 
@@ -268,30 +269,30 @@ int main(int argc, char* argv[])
       throw hedeya::invalid_matrix_error("Number of rows/columns cannot be negative");
     }
 
-    std::size_t totalElements = dimensions.rows * dimensions.columns;
+    std::size_t total_elements = dimensions.rows * dimensions.columns;
 
     if (USE_DYNAMIC_ARRAY) {
-      std::vector< int > dynamicMatrix(totalElements, 0);
+      std::vector< int > dynamic_matrix(total_elements, 0);
 
-      hedeya::fillMatrix(inputFile, dimensions, dynamicMatrix);
-      hedeya::rejectExtraData(inputFile);
+      hedeya::fillMatrix(input_file, dimensions, dynamic_matrix);
+      hedeya::rejectExtraData(input_file);
 
-      hedeya::iterateThroughMatrixSpiral(dimensions, dynamicMatrix.data(), hedeya::subtractDifferenceFromElement);
+      hedeya::iterateThroughMatrixSpiral(dimensions, dynamic_matrix.data(), hedeya::subtractDifferenceFromElement);
 
-      hedeya::outputMatrixToFile(dimensions, dynamicMatrix, OUTPUT_FILE_PATH);
+      hedeya::outputMatrixToFile(dimensions, dynamic_matrix, OUTPUT_FILE_PATH);
     } else {
-      if (totalElements > hedeya::MAX_ELEMENTS) {
+      if (total_elements > hedeya::MAX_ELEMENTS) {
         throw hedeya::invalid_matrix_error("Matrix exceeds fixed-size array capacity");
       }
 
-      std::array< int, hedeya::MAX_ELEMENTS > staticMatrix{};
+      std::array< int, hedeya::MAX_ELEMENTS > static_matrix{};
 
-      hedeya::fillMatrix(inputFile, dimensions, staticMatrix.data());
-      hedeya::rejectExtraData(inputFile);
+      hedeya::fillMatrix(input_file, dimensions, static_matrix.data());
+      hedeya::rejectExtraData(input_file);
 
-      hedeya::iterateThroughMatrixSpiral(dimensions, staticMatrix.data(), hedeya::subtractDifferenceFromElement);
+      hedeya::iterateThroughMatrixSpiral(dimensions, static_matrix.data(), hedeya::subtractDifferenceFromElement);
 
-      hedeya::outputMatrixToFile(dimensions, staticMatrix.data(), OUTPUT_FILE_PATH);
+      hedeya::outputMatrixToFile(dimensions, static_matrix.data(), OUTPUT_FILE_PATH);
     }
 
     return EXIT_SUCCESS;
