@@ -2,11 +2,10 @@
 #include <iostream>
 #include <vector>
 
-namespace osipov {
 int main() {
   int cifra = 0;
-  std::vector<int> posledovatelnost;
-  std::vector<int> otvet;
+  std::vector < int > posledovatelnost;
+  std::vector < int > otvet;
   int streak = 1;
 
   while (true) {
@@ -46,5 +45,4 @@ int main() {
   }
 
   return 0;
-}
 }
