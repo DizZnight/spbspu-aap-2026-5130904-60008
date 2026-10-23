@@ -1,5 +1,6 @@
 #include <iostream>
 
+
 int main()
 {
   int cifra = 0;
@@ -27,32 +28,28 @@ int main()
     std::cout << 0 << "\n";
     return 0;
   }
-
-  unsigned long i = 0;
-  while (i < posledovatelnost_size) {
-    if ((i + 1) == posledovatelnost_size) {
-      otvet.[otvet_size] = streak;
-      otvet_size++;
-      int max_streak = otvet[0];
-      for (int k = 1; k < otvet_size; k++){
-        if(otvet[k] > max_streak){
-          max_streak = otvet[k];
-        }
-      }
-      std::cout << max_streak << "\n"
-      return 0;
-    }
-
+  int i = 0;
+  while (i < posledovatelnost_size - 1) {
     if (posledovatelnost[i] <= posledovatelnost[i + 1]) {
       streak++;
-      i++;
     } else {
       otvet[otvet_size] = streak;
       otvet_size++;
       streak = 1;
-      i++;
     }
+    i++;
   }
 
-  return 0;
+  otvet[otvet_size] = streak;
+  otvet_size++;
+
+  int max_streak = otvet[0];
+  for (int k = 1; k < otvet_size; k++) {
+    if (otvet[k] > max_streak) {
+      max_streak = otvet[k];
+    }
+  }
+  std::cout << max_streak << "\n";
+
+ return 0;
 }
