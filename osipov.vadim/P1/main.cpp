@@ -2,10 +2,11 @@
 #include <iostream>
 #include <vector>
 
-int main() {
+int main()
+{
   int cifra = 0;
-  std::vector < int > posledovatelnost;
-  std::vector < int > otvet;
+  std::vector<int> posledovatelnost;
+  std::vector<int> otvet;
   int streak = 1;
 
   while (true) {
