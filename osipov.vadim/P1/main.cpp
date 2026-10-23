@@ -1,12 +1,12 @@
-#include <algorithm>
 #include <iostream>
-#include <vector>
 
 int main()
 {
   int cifra = 0;
-  std::vector<int> posledovatelnost;
-  std::vector<int> otvet;
+  int posledovatelnost[10000];
+  int posledovatelnost_size = 0;
+  int otvet[10000];
+  int otvet_size = 0;
   int streak = 1;
 
   while (true) {
@@ -19,19 +19,27 @@ int main()
       break;
     }
 
-    posledovatelnost.push_back(cifra);
+    posledovatelnost[posledovatelnost_size] = cifra;
+    posledovatelnost_size++;
   }
 
-  if (posledovatelnost.empty()) {
+  if (posledovatelnost_size == 0) {
     std::cout << 0 << "\n";
     return 0;
   }
 
   unsigned long i = 0;
-  while (i < posledovatelnost.size()) {
-    if ((i + 1) == posledovatelnost.size()) {
-      otvet.push_back(streak);
-      std::cout << *std::max_element(otvet.begin(), otvet.end()) << "\n";
+  while (i < posledovatelnost_size) {
+    if ((i + 1) == posledovatelnost_size) {
+      otvet.[otvet_size] = streak;
+      otvet_size++;
+      int max_streak = otvet[0];
+      for (int k = 1; k < otvet_size; k++){
+        if(otvet[k] > max_streak){
+          max_streak = otvet[k];
+        }
+      }
+      std::cout << max_streak << "\n"
       return 0;
     }
 
@@ -39,7 +47,8 @@ int main()
       streak++;
       i++;
     } else {
-      otvet.push_back(streak);
+      otvet[otvet_size] = streak;
+      otvet_size++;
       streak = 1;
       i++;
     }
