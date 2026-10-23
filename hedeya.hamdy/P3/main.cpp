@@ -1,302 +1,311 @@
 #ifndef MAIN_CPP
 #define MAIN_CPP
 
-#include <algorithm>
-#include <iostream>
-#include <stdexcept>
-#include <string>
-#include <utility>
+#include <array>
 #include <cstdlib>
 #include <fstream>
-#include <vector>
-#include <set>
-#include <variant>
 #include <functional>
+#include <iostream>
+#include <limits>
+#include <set>
+#include <stdexcept>
+#include <string>
+#include <vector>
 
-namespace hedeya
-{
-    const int MAX_ELEMENTS = 10000;
-    const int MAX_ROWS = 100;
-    const int MAX_COLS = 100;
+namespace hedeya {
+  const int MAX_ELEMENTS = 10000;
+  const int INVALID_MATRIX_ERROR = 2;
 
-    enum Direction
+  class invalid_matrix_error: public std::runtime_error {
+   public:
+    explicit invalid_matrix_error(const std::string& message = "Invalid matrix"):
+      std::runtime_error(message)
     {
-            UP,
-            DOWN,
-            LEFT,
-            RIGHT,
-        };
+    }
+  };
 
-    struct Bounds
+  enum Direction {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+  };
+
+  struct Bounds {
+    int top, bottom, left, right;
+  };
+
+  struct Dimensions {
+    int rows, columns;
+  };
+
+  struct Point {
+    int x, y;
+
+    bool operator<(const Point& other) const
     {
-        int top, bottom, left, right;
-    };
+      if (x != other.x)
+        return x < other.x;
+      return y < other.y;
+    }
+  };
 
-    struct Dimensions
-    {
-        int rows, columns;
-    };
+  Point getNextPosition(Direction direction, Point position)
+  {
+    switch (direction) {
+    case UP:
+      return Point{position.x, position.y - 1};
+    case RIGHT:
+      return Point{position.x + 1, position.y};
+    case DOWN:
+      return Point{position.x, position.y + 1};
+    case LEFT:
+      return Point{position.x - 1, position.y};
+    }
+    return position;
+  }
 
-    struct Point
-    {
-        int x, y;
+  bool isInBounds(Point position, Bounds bounds)
+  {
+    return ((position.x >= bounds.left) && (position.x <= bounds.right) && (position.y >= bounds.top)
+            && (position.y <= bounds.bottom));
+  }
 
-        bool operator<(const Point& other) const {
-            if (x != other.x) return x < other.x;
-            return y < other.y;
-        }
-    };
+  Direction getNextMovementDirection(Point currentPosition, Direction lastMovementDirection, Bounds bounds,
+                                     const std::set< Point >& seen)
+  {
+    Direction direction = UP;
 
-    Point getNextPosition(Direction direction, Point position);
-    enum Direction getNextMovementDirection(Point currentPosition, Bounds bounds, const std::set<Point>& seen);
-    void move(enum Direction direction, Point &position);
+    Point nextPositionLast = getNextPosition(lastMovementDirection, currentPosition);
+    Point nextPositionUp = getNextPosition(UP, currentPosition);
+    Point nextPositionDown = getNextPosition(DOWN, currentPosition);
+    Point nextPositionLeft = getNextPosition(LEFT, currentPosition);
+    Point nextPositionRight = getNextPosition(RIGHT, currentPosition);
 
-    void printMatrix(int rows, int columns, const std::vector<std::vector<int>>& matrix);
-    void printMatrix(int rows, int columns, const int matrix[][MAX_COLS]);
-
-    void outputMatrixToFile(
-        Dimensions dimensions,
-        const std::vector<std::vector<int>>& matrix,
-        std::ofstream& outputFile);
-
-    void outputMatrixToFile(
-        Dimensions dimensions,
-        const int matrix[][MAX_COLS],
-        std::ofstream& outputFile);
-
-    void fillMatrix(std::ifstream& inputFile, Dimensions& dimensions, std::vector<std::vector<int>> &matrix);
-    void fillMatrix(std::ifstream& inputFile, Dimensions& dimensions, int (&matrix)[MAX_ROWS][MAX_COLS]);
-
-    void subtractDifferenceFromElement(int &element, int i);
-
-    void iterateThroughMatrixSpiral(
-        Dimensions dimensions,
-        std::vector<std::vector<int>> &matrix,
-        const std::function<void(int&, int)>& elementFunction);
-
-    void iterateThroughMatrixSpiral(
-        Dimensions dimensions,
-        int (&matrix)[MAX_ROWS][MAX_COLS],
-        const std::function<void(int&, int)>& elementFunction);
-
-    Point getNextPosition(Direction direction, Point position)
-    {
-        switch (direction) {
-            case UP:    return Point{position.x, position.y - 1};
-            case RIGHT: return Point{position.x + 1, position.y};
-            case DOWN:  return Point{position.x, position.y + 1};
-            case LEFT:  return Point{position.x - 1, position.y};
-        }
-        return position;
+    if (!seen.count(nextPositionLast) && isInBounds(nextPositionLast, bounds)) {
+      return lastMovementDirection;
     }
 
-    enum Direction getNextMovementDirection(Point currentPosition, Bounds bounds, const std::set<Point>& seen)
-    {
-        enum Direction direction = UP;
-
-        if(currentPosition.y != bounds.top && !seen.count(getNextPosition(UP, currentPosition))){
-            direction = UP;
-        }
-        else if(currentPosition.x != bounds.right && !seen.count(getNextPosition(RIGHT, currentPosition))){
-            direction = RIGHT;
-        }
-        else if(currentPosition.y != bounds.bottom && !seen.count(getNextPosition(DOWN, currentPosition))){
-            direction = DOWN;
-        }
-        else if(currentPosition.x != bounds.left && !seen.count(getNextPosition(LEFT, currentPosition))){
-            direction = LEFT;
-        }
-
-        return direction;
+    if (isInBounds(nextPositionUp, bounds) && !seen.count(nextPositionUp)) {
+      direction = UP;
+    } else if (isInBounds(nextPositionRight, bounds) && !seen.count(nextPositionRight)) {
+      direction = RIGHT;
+    } else if (isInBounds(nextPositionDown, bounds) && !seen.count(nextPositionDown)) {
+      direction = DOWN;
+    } else if (isInBounds(nextPositionLeft, bounds) && !seen.count(nextPositionLeft)) {
+      direction = LEFT;
     }
 
-    void move(enum Direction direction, Point &position)
-    {
-        switch (direction) {
-            case UP:    position.y -= 1; break;
-            case RIGHT: position.x += 1; break;
-            case DOWN:  position.y += 1; break;
-            case LEFT:  position.x -= 1; break;
+    return direction;
+  }
+
+  void move(Direction direction, Point& position)
+  {
+    switch (direction) {
+    case UP:
+      position.y -= 1;
+      break;
+    case RIGHT:
+      position.x += 1;
+      break;
+    case DOWN:
+      position.y += 1;
+      break;
+    case LEFT:
+      position.x -= 1;
+      break;
+    }
+  }
+
+  void subtractDifferenceFromElement(int& element, std::size_t i)
+  {
+    element -= i + 1;
+  }
+
+  void rejectExtraData(std::ifstream& inputFile)
+  {
+    std::string extra;
+    if (inputFile >> extra) {
+      throw invalid_matrix_error("Extra data after matrix");
+    }
+  }
+
+  void fillMatrix(std::ifstream& inputFile, Dimensions dimensions, std::vector< int >& matrix)
+  {
+    for (int row = 0; row < dimensions.rows; ++row) {
+      for (int column = 0; column < dimensions.columns; ++column) {
+        const std::size_t index = (row * dimensions.columns) + column;
+
+        if (!(inputFile >> matrix[index])) {
+          throw invalid_matrix_error("Number of rows/columns does not match the number of elements in the input");
         }
+      }
     }
+  }
 
-    void outputMatrixToFile(
-        Dimensions dimensions,
-        const std::vector<std::vector<int>>& matrix,
-        const std::string& outputFilePath)
-    {
-        std::ofstream outputFile(outputFilePath);
+  void fillMatrix(std::ifstream& inputFile, Dimensions dimensions, int* matrix)
+  {
+    for (int row = 0; row < dimensions.rows; ++row) {
+      for (int column = 0; column < dimensions.columns; ++column) {
+        const std::size_t index = (row * dimensions.columns) + column;
 
-        if (!outputFile.is_open()) {
-            throw std::runtime_error("Output file failed to open");
+        if (!(inputFile >> matrix[index])) {
+          throw invalid_matrix_error("Number of rows/columns does not match the number of elements in the input");
         }
+      }
+    }
+  }
 
-        outputFile << dimensions.rows << " " << dimensions.columns << " ";
-        for (const std::vector<int>& row : matrix) {
-            for (const int element : row) {
-                outputFile << element << " ";
-            }
-        }
+  void outputMatrixToFile(Dimensions dimensions, const std::vector< int >& matrix, const std::string& outputFilePath)
+  {
+    std::ofstream outputFile(outputFilePath);
+
+    if (!outputFile.is_open()) {
+      throw std::runtime_error("Output file failed to open");
     }
 
-    void outputMatrixToFile(
-        Dimensions dimensions,
-        const int matrix[][MAX_COLS],
-        const std::string& outputFilePath)
-    {
-        std::ofstream outputFile(outputFilePath);
+    outputFile << dimensions.rows << " " << dimensions.columns << " ";
 
-        if (!outputFile.is_open()) {
-            throw std::runtime_error("Output file failed to open");
-        }
+    for (int row = 0; row < dimensions.rows; ++row) {
+      for (int column = 0; column < dimensions.columns; ++column) {
+        const std::size_t index = row * dimensions.columns + column;
 
-        outputFile << dimensions.rows << " " << dimensions.columns << " ";
-        for (int row = 0; row < dimensions.rows; ++row) {
-            for (int column = 0; column < dimensions.columns; ++column) {
-                outputFile << matrix[row][column] << " ";
-            }
-        }
+        outputFile << matrix[index] << " ";
+      }
+    }
+  }
+
+  void outputMatrixToFile(Dimensions dimensions, const int* matrix, const std::string& outputFilePath)
+  {
+    std::ofstream outputFile(outputFilePath);
+
+    if (!outputFile.is_open()) {
+      throw std::runtime_error("Output file failed to open");
     }
 
-    void fillMatrix(std::ifstream& inputFile, Dimensions& dimensions, std::vector<std::vector<int>> &matrix)
-    {
-        int rows = dimensions.rows;
-        int columns = dimensions.columns;
+    outputFile << dimensions.rows << " " << dimensions.columns << " ";
 
-        for (int row = 0; row < rows; ++row){
-            for (int column = 0; column < columns; ++column){
-                inputFile >> matrix[row][column];
-            }
-        }
+    for (int row = 0; row < dimensions.rows; ++row) {
+      for (int column = 0; column < dimensions.columns; ++column) {
+        const std::size_t index = (row * dimensions.columns) + column;
+
+        outputFile << matrix[index] << " ";
+      }
     }
+  }
 
-    void fillMatrix(std::ifstream& inputFile, Dimensions& dimensions, int (&matrix)[MAX_ROWS][MAX_COLS])
-    {
-        int rows = dimensions.rows;
-        int columns = dimensions.columns;
+  void iterateThroughMatrixSpiral(Dimensions dimensions, int* matrix,
+                                  const std::function< void(int&, std::size_t) >& elementFunction)
+  {
+    std::set< Point > seen = {};
 
-        for (int row = 0; row < rows; ++row){
-            for (int column = 0; column < columns; ++column){
-                inputFile >> matrix[row][column];
-            }
-        }
+    Bounds bounds{0, dimensions.rows - 1, 0, dimensions.columns - 1};
+    Point position{bounds.left, bounds.bottom};
+
+    const std::size_t totalElements = dimensions.rows * dimensions.columns;
+
+    Direction lastMovementDirection = UP;
+
+    for (std::size_t i = 0; i < totalElements; ++i) {
+      seen.insert(position);
+
+      const std::size_t index = (position.y * dimensions.columns) + position.x;
+
+      int& element = matrix[index];
+      elementFunction(element, i);
+
+      Direction direction = getNextMovementDirection(position, lastMovementDirection, bounds, seen);
+      lastMovementDirection = direction;
+
+      move(direction, position);
     }
-
-    void subtractDifferenceFromElement(int &element, int i)
-    {
-        int difference = i + 1;
-        element -= difference;
-    }
-
-    void iterateThroughMatrixSpiral(
-        Dimensions dimensions,
-        std::vector<std::vector<int>> &matrix,
-        const std::function<void(int&, int)>&& elementFunction)
-    {
-        std::set<Point> seen = {};
-
-        Bounds bounds{0, dimensions.rows - 1, 0, dimensions.columns - 1};
-        Point position{bounds.left, bounds.bottom};
-
-        for(int i = 0; i < dimensions.rows * dimensions.columns; ++i)
-            {
-                seen.insert(position);
-
-                int& element = matrix[position.y][position.x];
-                elementFunction(element, i);
-
-                enum Direction direction = getNextMovementDirection(position, bounds, seen);
-
-                move(direction, position);
-            }
-    }
-
-    void iterateThroughMatrixSpiral(
-        Dimensions dimensions,
-        int (&matrix)[MAX_ROWS][MAX_COLS],
-        const std::function<void(int&, int)>& elementFunction)
-    {
-        std::set<Point> seen = {};
-
-        Bounds bounds{0, dimensions.rows - 1, 0, dimensions.columns - 1};
-        Point position{bounds.left, bounds.bottom};
-
-        for(int i = 0; i < dimensions.rows * dimensions.columns; ++i)
-            {
-                seen.insert(position);
-
-                int& element = matrix[position.y][position.x];
-                elementFunction(element, i);
-
-                enum Direction direction = getNextMovementDirection(position, bounds, seen);
-
-                move(direction, position);
-            }
-    }
-}
+  }
+}  // namespace hedeya
 
 int main(int argc, char* argv[])
 {
-    try
-    {
-        if(argc != 4)
-        {
-            throw std::invalid_argument("Exactly 3 arguments are expected: num, input, output");
-        }
-
-        int num = std::stoi(argv[1]);
-        if(num != 1 && num != 2)
-        {
-            throw std::invalid_argument("Num must be either 1 for a static array or 2 for a dynamic array");
-        }
-
-        bool useDynamicArray = (num == 2);
-
-        std::string inputFilePath = argv[2];
-        std::string outputFilePath = argv[3];
-
-        std::ifstream inputFile(inputFilePath);
-
-        hedeya::Dimensions dimensions{0, 0};
-        inputFile >> dimensions.rows >> dimensions.columns;
-
-        int staticMatrix[hedeya::MAX_ROWS][hedeya::MAX_COLS] = {0};
-        std::vector<std::vector<int>> dynamicMatrix;
-
-        if (useDynamicArray)
-        {
-            dynamicMatrix.assign(dimensions.rows, std::vector<int>(dimensions.columns, 0));
-
-            hedeya::fillMatrix(inputFile, dimensions, dynamicMatrix);
-            hedeya::iterateThroughMatrixSpiral(dimensions, dynamicMatrix, hedeya::subtractDifferenceFromElement);
-            hedeya::outputMatrixToFile(dimensions, dynamicMatrix, outputFilePath);
-        } else {
-            if (
-            (dimensions.rows * dimensions.columns > hedeya::MAX_ELEMENTS)
-            || dimensions.rows > hedeya::MAX_ROWS
-            || dimensions.columns > hedeya::MAX_COLS)
-            {
-                throw std::range_error(
-                "Number of elements, rows, or columns exceeds the allowed maximum.");
-            }
-
-            hedeya::fillMatrix(inputFile, dimensions, staticMatrix);
-            hedeya::iterateThroughMatrixSpiral(dimensions, staticMatrix, hedeya::subtractDifferenceFromElement);
-            hedeya::outputMatrixToFile(dimensions, staticMatrix, outputFilePath);
-        }
-
-        return EXIT_SUCCESS;
+  try {
+    if (argc < 4) {
+      throw std::invalid_argument("Not enough arguments");
     }
-    catch(const std::invalid_argument& error)
-    {
-        std::cerr << "Invalid argument error: " << error.what() << "\n";
-        return EXIT_FAILURE;
+    if (argc > 4) {
+      throw std::invalid_argument("Too many arguments");
     }
-    catch(const std::range_error& error)
-    {
-        std::cerr << "Range error: " << error.what() << "\n";
-        return EXIT_FAILURE;
+
+    int NUM_ARG = 0;
+
+    try {
+      std::size_t endPosition = 0;
+
+      NUM_ARG = std::stoi(argv[1], &endPosition);
+      if (endPosition != std::string(argv[1]).length()) {
+        throw std::invalid_argument("First parameter is not a number");
+      }
+    } catch (const std::invalid_argument&) {
+      throw std::invalid_argument("First parameter is not a number");
     }
+
+    if (NUM_ARG > 2 || NUM_ARG < 1) {
+      throw std::invalid_argument("First parameter is out of range");
+    }
+
+    const bool USE_DYNAMIC_ARRAY = (NUM_ARG == 2);
+
+    const std::string INPUT_FILE_PATH = argv[2];
+    const std::string OUTPUT_FILE_PATH = argv[3];
+
+    std::ifstream inputFile(INPUT_FILE_PATH);
+    if (!inputFile.is_open()) {
+      throw hedeya::invalid_matrix_error("Input file failed to open");
+    }
+
+    hedeya::Dimensions dimensions{0, 0};
+    if (!(inputFile >> dimensions.rows >> dimensions.columns)) {
+      throw hedeya::invalid_matrix_error("Number of rows/columns is not a valid number");
+    }
+
+    if (dimensions.rows < 0 || dimensions.columns < 0) {
+      throw hedeya::invalid_matrix_error("Number of rows/columns cannot be negative");
+    }
+
+    std::size_t totalElements = dimensions.rows * dimensions.columns;
+
+    if (USE_DYNAMIC_ARRAY) {
+      std::vector< int > dynamicMatrix(totalElements, 0);
+
+      hedeya::fillMatrix(inputFile, dimensions, dynamicMatrix);
+      hedeya::rejectExtraData(inputFile);
+
+      hedeya::iterateThroughMatrixSpiral(dimensions, dynamicMatrix.data(), hedeya::subtractDifferenceFromElement);
+
+      hedeya::outputMatrixToFile(dimensions, dynamicMatrix, OUTPUT_FILE_PATH);
+    } else {
+      if (totalElements > hedeya::MAX_ELEMENTS) {
+        throw hedeya::invalid_matrix_error("Matrix exceeds fixed-size array capacity");
+      }
+
+      std::array< int, hedeya::MAX_ELEMENTS > staticMatrix{};
+
+      hedeya::fillMatrix(inputFile, dimensions, staticMatrix.data());
+      hedeya::rejectExtraData(inputFile);
+
+      hedeya::iterateThroughMatrixSpiral(dimensions, staticMatrix.data(), hedeya::subtractDifferenceFromElement);
+
+      hedeya::outputMatrixToFile(dimensions, staticMatrix.data(), OUTPUT_FILE_PATH);
+    }
+
+    return EXIT_SUCCESS;
+
+  } catch (const hedeya::invalid_matrix_error& error) {
+    std::cerr << "Invalid matrix error: " << error.what() << "\n";
+    return hedeya::INVALID_MATRIX_ERROR;
+  } catch (const std::invalid_argument& error) {
+    std::cerr << "Invalid argument error: " << error.what() << "\n";
+    return EXIT_FAILURE;
+  } catch (const std::exception& error) {
+    std::cerr << "Error: " << error.what() << "\n";
+    return EXIT_FAILURE;
+  }
 }
 
 #endif
