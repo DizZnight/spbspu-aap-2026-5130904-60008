@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 	int* dynamic_matrix = nullptr;
 
 	std::ifstream file(input_filename);
-	
+
 	if (file.fail())
 	{
 		std::cerr << "cannot be interpreted as a two-dimensional array "
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 
 	if (num == "1")
 	{
-		read_status  = malyshev::process_fix_massive(file, static_matrix, rows, cols);
+		read_status = malyshev::process_fix_massive(file, static_matrix, rows, cols);
 	}
 
 	else if (num == "2")
@@ -64,9 +64,9 @@ int main(int argc, char* argv[])
 
 	file.close();
 
-	if (read_status != 0) 
+	if (read_status != 0)
 	{
-		std::cerr << "cannot be interpreted as a two-dimensional array " 
+		std::cerr << "cannot be interpreted as a two-dimensional array "
 			<< "or the file is empty\n";
 		if (num == "2" && dynamic_matrix != nullptr) {
 			delete[] dynamic_matrix;
@@ -102,11 +102,11 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-namespace malyshev{
+namespace malyshev {
 	int process_fix_massive(std::ifstream& ifile, int* matrix, int& rows, int& cols)
 	{
 		ifile >> rows >> cols;
-		if (ifile.fail()) 
+		if (ifile.fail())
 		{
 			return error_data;
 		}
@@ -119,7 +119,7 @@ namespace malyshev{
 		for (size_t i = 0; i < total_el;i++)
 		{
 			ifile >> matrix[i];
-			if (ifile.fail()) 
+			if (ifile.fail())
 			{
 				return error_data;
 			}
@@ -140,7 +140,7 @@ namespace malyshev{
 		{
 			return error_data;
 		}
-		if (rows < 0 || cols < 0) 
+		if (rows < 0 || cols < 0)
 		{
 			return error_data;
 		}
