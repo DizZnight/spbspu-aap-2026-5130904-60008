@@ -1,6 +1,7 @@
 #include <iostream>
 
-int main() {
+int main()
+{
   const int max_size_2 = 10000;
   int cifra = 0;
   int posledovatelnost[max_size_2];
