@@ -9,9 +9,9 @@ namespace malyshev
   const int max_size = 10000;
   const std::string elements_more_10000 = "elements more 10000";
 
-  int process_fix_massive(std::ifstream &ifile, int *matrix, int &rows, int &cols);
-  int process_dynamic_massive(std::ifstream &ifile, int *&matrix, int &rows, int &cols);
-  int long_ser_cols(int *matrix, int rows, int cols);
+  int processFixMassive(std::ifstream &ifile, int *matrix, int &rows, int &cols);
+  int processDynamicMassive(std::ifstream &ifile, int *&matrix, int &rows, int &cols);
+  int longSerCols(const int *matrix, int rows, int cols);
 }
 
 int main(int argc, char *argv[])
@@ -25,15 +25,15 @@ int main(int argc, char *argv[])
     return malyshev::error_args;
   }
 
-  std::string num = argv[1];
-  std::string input_filename = argv[2];
-  std::string output_filename = argv[3];
+  const std::string num = argv[1];
+  const std::string input_filename = argv[2];
+  const std::string output_filename = argv[3];
 
   int rows = 0;
   int cols = 0;
   int res = 0;
   int read_status = 0;
-  int static_matrix[10000];
+  int static_matrix[malyshev::max_size];
   int *dynamic_matrix = nullptr;
 
   std::ifstream file(input_filename);
@@ -47,11 +47,11 @@ int main(int argc, char *argv[])
 
   if (num == "1")
   {
-    read_status = malyshev::process_fix_massive(file, static_matrix, rows, cols);
+    read_status = malyshev::processFixMassive(file, static_matrix, rows, cols);
   }
   else if (num == "2")
   {
-    read_status = malyshev::process_dynamic_massive(file, dynamic_matrix, rows, cols);
+    read_status = malyshev::processDynamicMassive(file, dynamic_matrix, rows, cols);
   }
   else
   {
@@ -72,17 +72,21 @@ int main(int argc, char *argv[])
     if (num == "2" && dynamic_matrix != nullptr)
     {
       delete[] dynamic_matrix;
+      dynamic_matrix = nullptr;
     }
     return read_status;
   }
 
+  const int final_rows = rows;
+  const int final_cols = cols;
+
   if (num == "1")
   {
-    res = malyshev::long_ser_cols(static_matrix, rows, cols);
+    res = malyshev::longSerCols(static_matrix, final_rows, final_cols);
   }
   else if (num == "2")
   {
-    res = malyshev::long_ser_cols(dynamic_matrix, rows, cols);
+    res = malyshev::longSerCols(dynamic_matrix, final_rows, final_cols);
   }
 
   std::ofstream outfile(output_filename);
@@ -108,19 +112,19 @@ int main(int argc, char *argv[])
 
 namespace malyshev
 {
-  int process_fix_massive(std::ifstream &ifile, int *matrix, int &rows, int &cols)
+  int processFixMassive(std::ifstream &ifile, int *matrix, int &rows, int &cols)
   {
     ifile >> rows >> cols;
     if (ifile.fail())
     {
       return error_data;
     }
-    if (rows * cols > max_size)
+    if (rows < 0 || cols < 0 || rows * cols > max_size)
     {
-      std::cerr << "elements more 10000\n";
+      std::cerr << elements_more_10000 << "\n";
       return error_data;
     }
-    int total_el = rows * cols;
+    const int total_el = rows * cols;
     for (int i = 0; i < total_el; i++)
     {
       ifile >> matrix[i];
@@ -138,7 +142,7 @@ namespace malyshev
     return 0;
   }
 
-  int process_dynamic_massive(std::ifstream &ifile, int *&matrix, int &rows, int &cols)
+  int processDynamicMassive(std::ifstream &ifile, int *&matrix, int &rows, int &cols)
   {
     ifile >> rows >> cols;
     if (ifile.fail())
@@ -150,12 +154,14 @@ namespace malyshev
       return error_data;
     }
     matrix = new int[rows * cols];
-    int total_el = rows * cols;
+    const int total_el = rows * cols;
     for (int i = 0; i < total_el; i++)
     {
       ifile >> matrix[i];
       if (ifile.fail())
       {
+        delete[] matrix;
+        matrix = nullptr;
         return error_data;
       }
     }
@@ -163,12 +169,14 @@ namespace malyshev
     ifile >> extra;
     if (!ifile.fail())
     {
+      delete[] matrix;
+      matrix = nullptr;
       return error_data;
     }
     return 0;
   }
 
-  int long_ser_cols(int *matrix, int rows, int cols)
+  int longSerCols(const int *matrix, int rows, int cols)
   {
     if (rows <= 0 || cols <= 0)
     {
