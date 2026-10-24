@@ -35,16 +35,13 @@ int main(int argc, char *argv[])
 
     if (parameter == 1) {
       savenko::processFileWithStaticArray(input_filename, output_filename);
-    }
-    else if (parameter == 2) {
+    } else if (parameter == 2) {
       savenko::processFileWithDynamicArray(input_filename, output_filename);
     }
-  }
-  catch (const std::exception &e) {
+  } catch (const std::exception &e) {
     std::cerr << "Error: " << e.what() << "\n";
     return 1;
-  }
-  catch (int error_code) {
+  } catch (int error_code) {
     return error_code;
   }
 
@@ -53,13 +50,13 @@ int main(int argc, char *argv[])
 
 void savenko::readMatrixFromFile(const std::string &input_filename, int *matrix, int max_capacity, int &rows, int &cols)
 {
-  std::ifstream inFile(input_filename);
-  if (!inFile.is_open()) {
+  std::ifstream in_file(input_filename);
+  if (!in_file.is_open()) {
     std::cerr << "Error: Failed to open the file for reading!\n";
     throw 2;
   }
 
-  if (!(inFile >> rows >> cols) || rows <= 0 || cols <= 0) {
+  if (!(in_file >> rows >> cols) || rows < 0 || cols < 0) {
     std::cerr << "Error: Invalid matrix dimensions.\n";
     throw 2;
   }
@@ -73,7 +70,7 @@ void savenko::readMatrixFromFile(const std::string &input_filename, int *matrix,
   int element_count = 0;
   int current_number = 0;
 
-  while (inFile >> current_number) {
+  while (in_file >> current_number) {
     if (element_count >= total_elements) {
       std::cerr << "Error: Extraneous elements found.\n";
       throw 2;
@@ -83,7 +80,7 @@ void savenko::readMatrixFromFile(const std::string &input_filename, int *matrix,
     element_count = element_count + 1;
   }
 
-  if (!inFile.eof() && inFile.fail()) {
+  if (!in_file.eof() && in_file.fail()) {
     std::cerr << "Error: Invalid character or overflow.\n";
     throw 2;
   }
@@ -93,7 +90,7 @@ void savenko::readMatrixFromFile(const std::string &input_filename, int *matrix,
     throw 2;
   }
 
-  inFile.close();
+  in_file.close();
 }
 
 void savenko::applyLayerIncrement(int *matrix, int rows, int cols)
@@ -115,21 +112,21 @@ void savenko::applyLayerIncrement(int *matrix, int rows, int cols)
 
 void savenko::writeMatrixToFile(const std::string &output_filename, const int *matrix, int rows, int cols)
 {
-  std::ofstream outFile(output_filename);
-  if (!outFile.is_open()) {
+  std::ofstream out_file(output_filename);
+  if (!out_file.is_open()) {
     std::cerr << "Error: Failed to open file for writing!\n";
     throw 2;
   }
 
-  outFile << rows << " " << cols;
+  out_file << rows << " " << cols;
 
   int total_elements = rows * cols;
   for (int i = 0; i < total_elements; ++i) {
-    outFile << " " << matrix[i];
+    out_file << " " << matrix[i];
   }
 
-  outFile << "\n";
-  outFile.close();
+  out_file << "\n";
+  out_file.close();
 }
 
 void savenko::processFileWithStaticArray(const std::string &input_filename, const std::string &output_filename)
@@ -150,8 +147,9 @@ void savenko::processFileWithDynamicArray(const std::string &input_filename, con
   int cols = 0;
 
   {
-    std::ifstream inFile(input_filename);
-    if (!inFile.is_open() || !(inFile >> rows >> cols) || rows <= 0 || cols <= 0) {
+    std::ifstream in_file(input_filename);
+    if (!in_file.is_open() || !(in_file >> rows >> cols) || rows <= 0 ||
+        cols <= 0) {
       std::cerr << "Error: Invalid matrix or dimensions.\n";
       throw 2;
     }
@@ -167,8 +165,7 @@ void savenko::processFileWithDynamicArray(const std::string &input_filename, con
     readMatrixFromFile(input_filename, matrix, total_elements, rows_check, cols_check);
     applyLayerIncrement(matrix, rows, cols);
     writeMatrixToFile(output_filename, matrix, rows, cols);
-  }
-  catch (int error_code) {
+  } catch (int error_code) {
     delete[] matrix;
     throw error_code;
   }
