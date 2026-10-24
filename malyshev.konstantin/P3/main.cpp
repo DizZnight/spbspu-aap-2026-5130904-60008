@@ -13,7 +13,7 @@ int process_fix_massive(std::ifstream &ifile, int *matrix, int &rows,
 int process_dynamic_massive(std::ifstream &ifile, int *&matrix, int &rows,
                             int &cols);
 int long_ser_cols(int *matrix, int rows, int cols);
-} // namespace malyshev
+} 
 
 int main(int argc, char *argv[]) {
   if (argc != 4) {
@@ -109,13 +109,13 @@ int process_fix_massive(std::ifstream &ifile, int *matrix, int &rows,
     return error_data;
   }
   int total_el = rows * cols;
-  for (size_t i = 0; i < total_el; i++) {
+  for (int i = 0; i < total_el; i++) {
     ifile >> matrix[i];
     if (ifile.fail()) {
       return error_data;
     }
   }
-  char extra;
+  char extra = 0;
   ifile >> extra;
   if (!ifile.fail()) {
     return error_data;
@@ -140,7 +140,7 @@ int process_dynamic_massive(std::ifstream &ifile, int *&matrix, int &rows,
       return error_data;
     }
   }
-  char extra;
+  char extra = 0;
   ifile >> extra;
   if (!ifile.fail()) {
     return error_data;
@@ -156,11 +156,11 @@ int long_ser_cols(int *matrix, int rows, int cols) {
   int max_ser_len = 0;
   int max_cols = 0;
 
-  for (size_t i = 0; i < cols; i++) {
+  for (int i = 0; i < cols; i++) {
     int current_sers = 1;
     int max_in_col = 1;
 
-    for (size_t j = 1; j < rows; j++) {
+    for (int j = 1; j < rows; j++) {
       if (matrix[j * cols + i] == matrix[(j - 1) * cols + i]) {
         current_sers++;
       } else {
@@ -177,4 +177,4 @@ int long_ser_cols(int *matrix, int rows, int cols) {
   }
   return max_cols;
 }
-} // namespace malyshev
+} 
