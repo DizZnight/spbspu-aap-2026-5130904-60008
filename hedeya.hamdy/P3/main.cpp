@@ -3,10 +3,10 @@
 
 #include <array>
 #include <cstdlib>
+#include <exception>
 #include <fstream>
 #include <functional>
 #include <iostream>
-#include <limits>
 #include <set>
 #include <stdexcept>
 #include <string>
@@ -16,12 +16,11 @@ namespace hedeya {
   const int MAX_ELEMENTS = 10000;
   const int INVALID_MATRIX_ERROR = 2;
 
-  class invalid_matrix_error: public std::runtime_error {
-   public:
-    explicit invalid_matrix_error(const std::string& message = "Invalid matrix"):
+  class InvalidMatrixError: public std::runtime_error {
+  public:
+    explicit InvalidMatrixError(const std::string& message = "Invalid matrix"):
       std::runtime_error(message)
-    {
-    }
+    {}
   };
 
   enum Direction {
@@ -44,8 +43,10 @@ namespace hedeya {
 
     bool operator<(const Point& other) const
     {
-      if (x != other.x)
+      if (x != other.x) {
         return x < other.x;
+      }
+
       return y < other.y;
     }
   };
@@ -67,23 +68,23 @@ namespace hedeya {
 
   bool isInBounds(Point position, Bounds bounds)
   {
-    return ((position.x >= bounds.left) && (position.x <= bounds.right) && (position.y >= bounds.top)
-            && (position.y <= bounds.bottom));
+    const bool is_x_in_bounds = position.x >= bounds.left && position.x <= bounds.right;
+    const bool is_y_in_bounds = position.y >= bounds.top && position.y <= bounds.bottom;
+    return is_x_in_bounds && is_y_in_bounds;
   }
 
-  Direction getNextMovementDirection(Point current_position, Direction last_movement_direction,
-                                     Bounds bounds, const std::set< Point >& seen)
+  Direction getNextDirection(Point position, Direction last_direction, Bounds bounds, const std::set< Point >& seen)
   {
     Direction direction = UP;
 
-    Point next_position_last = getNextPosition(last_movement_direction, current_position);
-    Point next_position_up = getNextPosition(UP, current_position);
-    Point next_position_down = getNextPosition(DOWN, current_position);
-    Point next_position_left = getNextPosition(LEFT, current_position);
-    Point next_position_right = getNextPosition(RIGHT, current_position);
+    const Point next_position_last = getNextPosition(last_direction, position);
+    const Point next_position_up = getNextPosition(UP, position);
+    const Point next_position_down = getNextPosition(DOWN, position);
+    const Point next_position_left = getNextPosition(LEFT, position);
+    const Point next_position_right = getNextPosition(RIGHT, position);
 
     if (!seen.count(next_position_last) && isInBounds(next_position_last, bounds)) {
-      return last_movement_direction;
+      return last_direction;
     }
 
     if (isInBounds(next_position_up, bounds) && !seen.count(next_position_up)) {
@@ -126,7 +127,7 @@ namespace hedeya {
   {
     std::string extra;
     if (input_file >> extra) {
-      throw invalid_matrix_error("Extra data after matrix");
+      throw InvalidMatrixError("Extra data after matrix");
     }
   }
 
@@ -137,7 +138,7 @@ namespace hedeya {
         const std::size_t index = (row * dimensions.columns) + column;
 
         if (!(input_file >> matrix[index])) {
-          throw invalid_matrix_error("Number of rows/columns does not match the number of elements in the input");
+          throw InvalidMatrixError("Number of rows/columns does not match the number of elements in the input");
         }
       }
     }
@@ -150,14 +151,13 @@ namespace hedeya {
         const std::size_t index = (row * dimensions.columns) + column;
 
         if (!(input_file >> matrix[index])) {
-          throw invalid_matrix_error("Number of rows/columns does not match the number of elements in the input");
+          throw InvalidMatrixError("Number of rows/columns does not match the number of elements in the input");
         }
       }
     }
   }
 
-  void outputMatrixToFile(Dimensions dimensions, const std::vector< int >& matrix,
-                          const std::string& output_file_path)
+  void outputMatrixToFile(Dimensions dimensions, const std::vector< int >& matrix, const std::string& output_file_path)
   {
     std::ofstream output_file(output_file_path);
 
@@ -195,17 +195,16 @@ namespace hedeya {
     }
   }
 
-  void iterateThroughMatrixSpiral(Dimensions dimensions, int* matrix,
-                                  const std::function< void(int&, std::size_t) >& element_function)
+  void iterateSpiral(Dimensions dimensions, int* matrix, const std::function< void(int&, std::size_t) >& element_func)
   {
     std::set< Point > seen = {};
 
-    Bounds bounds{0, dimensions.rows - 1, 0, dimensions.columns - 1};
+    const Bounds bounds{0, dimensions.rows - 1, 0, dimensions.columns - 1};
     Point position{bounds.left, bounds.bottom};
 
     const std::size_t total_elements = dimensions.rows * dimensions.columns;
 
-    Direction last_movement_direction = UP;
+    Direction last_direction = UP;
 
     for (std::size_t i = 0; i < total_elements; ++i) {
       seen.insert(position);
@@ -213,15 +212,15 @@ namespace hedeya {
       const std::size_t index = (position.y * dimensions.columns) + position.x;
 
       int& element = matrix[index];
-      element_function(element, i);
+      element_func(element, i);
 
-      Direction direction = getNextMovementDirection(position, last_movement_direction, bounds, seen);
-      last_movement_direction = direction;
+      const Direction direction = getNextDirection(position, last_direction, bounds, seen);
+      last_direction = direction;
 
       move(direction, position);
     }
   }
-}  // namespace hedeya
+}
 
 int main(int argc, char* argv[])
 {
@@ -257,19 +256,19 @@ int main(int argc, char* argv[])
 
     std::ifstream input_file(INPUT_FILE_PATH);
     if (!input_file.is_open()) {
-      throw hedeya::invalid_matrix_error("Input file failed to open");
+      throw hedeya::InvalidMatrixError("Input file failed to open");
     }
 
     hedeya::Dimensions dimensions{0, 0};
     if (!(input_file >> dimensions.rows >> dimensions.columns)) {
-      throw hedeya::invalid_matrix_error("Number of rows/columns is not a valid number");
+      throw hedeya::InvalidMatrixError("Number of rows/columns is not a valid number");
     }
 
     if (dimensions.rows < 0 || dimensions.columns < 0) {
-      throw hedeya::invalid_matrix_error("Number of rows/columns cannot be negative");
+      throw hedeya::InvalidMatrixError("Number of rows/columns cannot be negative");
     }
 
-    std::size_t total_elements = dimensions.rows * dimensions.columns;
+    const std::size_t total_elements = dimensions.rows * dimensions.columns;
 
     if (USE_DYNAMIC_ARRAY) {
       std::vector< int > dynamic_matrix(total_elements, 0);
@@ -277,12 +276,12 @@ int main(int argc, char* argv[])
       hedeya::fillMatrix(input_file, dimensions, dynamic_matrix);
       hedeya::rejectExtraData(input_file);
 
-      hedeya::iterateThroughMatrixSpiral(dimensions, dynamic_matrix.data(), hedeya::subtractDifferenceFromElement);
+      hedeya::iterateSpiral(dimensions, dynamic_matrix.data(), hedeya::subtractDifferenceFromElement);
 
       hedeya::outputMatrixToFile(dimensions, dynamic_matrix, OUTPUT_FILE_PATH);
     } else {
       if (total_elements > hedeya::MAX_ELEMENTS) {
-        throw hedeya::invalid_matrix_error("Matrix exceeds fixed-size array capacity");
+        throw hedeya::InvalidMatrixError("Matrix exceeds fixed-size array capacity");
       }
 
       std::array< int, hedeya::MAX_ELEMENTS > static_matrix{};
@@ -290,14 +289,14 @@ int main(int argc, char* argv[])
       hedeya::fillMatrix(input_file, dimensions, static_matrix.data());
       hedeya::rejectExtraData(input_file);
 
-      hedeya::iterateThroughMatrixSpiral(dimensions, static_matrix.data(), hedeya::subtractDifferenceFromElement);
+      hedeya::iterateSpiral(dimensions, static_matrix.data(), hedeya::subtractDifferenceFromElement);
 
       hedeya::outputMatrixToFile(dimensions, static_matrix.data(), OUTPUT_FILE_PATH);
     }
 
     return EXIT_SUCCESS;
 
-  } catch (const hedeya::invalid_matrix_error& error) {
+  } catch (const hedeya::InvalidMatrixError& error) {
     std::cerr << "Invalid matrix error: " << error.what() << "\n";
     return hedeya::INVALID_MATRIX_ERROR;
   } catch (const std::invalid_argument& error) {
