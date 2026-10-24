@@ -13,7 +13,7 @@ int process_fix_massive(std::ifstream &ifile, int *matrix, int &rows,
 int process_dynamic_massive(std::ifstream &ifile, int *&matrix, int &rows,
                             int &cols);
 int long_ser_cols(int *matrix, int rows, int cols);
-}
+} 
 
 int main(int argc, char *argv[]) {
   if (argc != 4) {
