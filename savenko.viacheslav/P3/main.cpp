@@ -4,18 +4,15 @@
 #include <iostream>
 #include <string>
 
-namespace savenko {
-void readMatrixFromFile(const std::string &input_filename, int *matrix,
-                        int max_capacity, int &rows, int &cols);
+namespace savenko
+{
+void readMatrixFromFile(const std::string &input_filename, int *matrix, int max_capacity, int &rows, int &cols);
 void applyLayerIncrement(int *matrix, int rows, int cols);
-void writeMatrixToFile(const std::string &output_filename, const int *matrix,
-                       int rows, int cols);
+void writeMatrixToFile(const std::string &output_filename, const int *matrix, int rows, int cols);
 
-void processFileWithStaticArray(const std::string &input_filename,
-                                const std::string &output_filename);
-void processFileWithDynamicArray(const std::string &input_filename,
-                                 const std::string &output_filename);
-} // namespace savenko
+void processFileWithStaticArray(const std::string &input_filename, const std::string &output_filename);
+void processFileWithDynamicArray(const std::string &input_filename, const std::string &output_filename);
+}
 
 int main(const int argc, const char *const argv[]) {
   if (argc != 4) {
