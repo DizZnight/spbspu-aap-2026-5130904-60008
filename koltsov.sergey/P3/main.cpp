@@ -1,4 +1,6 @@
 #include <climits>
+#include <cstddef>
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
@@ -139,19 +141,19 @@ int koltsov::countSaddlesElements(const int* data, int rows, int cols)
     for (int j = 0; j < cols; ++j)
     {
       const int element = data[i * cols + j];
-      bool minRow = true;
-      bool maxCol = true;
+      bool min_row = true;
+      bool max_col = true;
 
       for (int k = 0; k < cols; ++k)
       {
         if (data[i * cols + k] < element)
         {
-          minRow = false;
+          min_row = false;
           break;
         }
       }
 
-      if (!minRow)
+      if (!min_row)
       {
         continue;
       }
@@ -160,12 +162,12 @@ int koltsov::countSaddlesElements(const int* data, int rows, int cols)
       {
         if (data[k * cols + j] > element)
         {
-          maxCol = false;
+          max_col = false;
           break;
         }
       }
 
-      if (minRow && maxCol)
+      if (min_row && max_col)
       {
         ++total;
       }
@@ -208,7 +210,7 @@ int koltsov::runDynamicArr(std::ifstream& input, int rows, int cols)
     throw std::runtime_error(ERR_MATRIX);
   }
 
-  int* data = new int[rows * cols]();
+  int* const data = new int[rows * cols]();
 
   try
   {
