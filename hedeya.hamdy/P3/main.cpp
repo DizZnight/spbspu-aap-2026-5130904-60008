@@ -51,6 +51,106 @@ namespace hedeya {
     }
   };
 
+  Point getNextPosition(Direction direction, Point position);
+  bool isInBounds(Point position, Bounds bounds);
+  Direction getNextDirection(Point position, Direction last_direction, Bounds bounds, const std::set< Point >& seen);
+  void move(Direction direction, Point& position);
+  void subtractDifferenceFromElement(int& element, std::size_t i);
+  void rejectExtraData(std::ifstream& input_file);
+  void fillMatrix(std::ifstream& input_file, Dimensions dimensions, std::vector< int >& matrix);
+  void fillMatrix(std::ifstream& input_file, Dimensions dimensions, int* matrix);
+  void outputMatrixToFile(Dimensions dimensions, const std::vector< int >& matrix, const std::string& output_file_path);
+  void outputMatrixToFile(Dimensions dimensions, const int* matrix, const std::string& output_file_path);
+  void iterateSpiral(Dimensions dimensions, int* matrix, const std::function< void(int&, std::size_t) >& element_func);
+}
+
+int main(int argc, char* argv[])
+{
+  try {
+    if (argc < 4) {
+      throw std::invalid_argument("Not enough arguments");
+    }
+    if (argc > 4) {
+      throw std::invalid_argument("Too many arguments");
+    }
+
+    int num_arg = 0;
+
+    try {
+      std::size_t end_position = 0;
+
+      num_arg = std::stoi(argv[1], &end_position);
+      if (end_position != std::string(argv[1]).length()) {
+        throw std::invalid_argument("First parameter is not a number");
+      }
+    } catch (const std::invalid_argument&) {
+      throw std::invalid_argument("First parameter is not a number");
+    }
+
+    if (num_arg > 2 || num_arg < 1) {
+      throw std::invalid_argument("First parameter is out of range");
+    }
+
+    const bool USE_DYNAMIC_ARRAY = (num_arg == 2);
+
+    const std::string INPUT_FILE_PATH = argv[2];
+    const std::string OUTPUT_FILE_PATH = argv[3];
+
+    std::ifstream input_file(INPUT_FILE_PATH);
+    if (!input_file.is_open()) {
+      throw hedeya::InvalidMatrixError("Input file failed to open");
+    }
+
+    hedeya::Dimensions dimensions{0, 0};
+    if (!(input_file >> dimensions.rows >> dimensions.columns)) {
+      throw hedeya::InvalidMatrixError("Number of rows/columns is not a valid number");
+    }
+
+    if (dimensions.rows < 0 || dimensions.columns < 0) {
+      throw hedeya::InvalidMatrixError("Number of rows/columns cannot be negative");
+    }
+
+    const std::size_t total_elements = dimensions.rows * dimensions.columns;
+
+    if (USE_DYNAMIC_ARRAY) {
+      std::vector< int > dynamic_matrix(total_elements, 0);
+
+      hedeya::fillMatrix(input_file, dimensions, dynamic_matrix);
+      hedeya::rejectExtraData(input_file);
+
+      hedeya::iterateSpiral(dimensions, dynamic_matrix.data(), hedeya::subtractDifferenceFromElement);
+
+      hedeya::outputMatrixToFile(dimensions, dynamic_matrix, OUTPUT_FILE_PATH);
+    } else {
+      if (total_elements > hedeya::MAX_ELEMENTS) {
+        throw hedeya::InvalidMatrixError("Matrix exceeds fixed-size array capacity");
+      }
+
+      std::array< int, hedeya::MAX_ELEMENTS > static_matrix{};
+
+      hedeya::fillMatrix(input_file, dimensions, static_matrix.data());
+      hedeya::rejectExtraData(input_file);
+
+      hedeya::iterateSpiral(dimensions, static_matrix.data(), hedeya::subtractDifferenceFromElement);
+
+      hedeya::outputMatrixToFile(dimensions, static_matrix.data(), OUTPUT_FILE_PATH);
+    }
+
+    return EXIT_SUCCESS;
+
+  } catch (const hedeya::InvalidMatrixError& error) {
+    std::cerr << "Invalid matrix error: " << error.what() << "\n";
+    return hedeya::INVALID_MATRIX_ERROR;
+  } catch (const std::invalid_argument& error) {
+    std::cerr << "Invalid argument error: " << error.what() << "\n";
+    return EXIT_FAILURE;
+  } catch (const std::exception& error) {
+    std::cerr << "Error: " << error.what() << "\n";
+    return EXIT_FAILURE;
+  }
+}
+
+namespace hedeya {
   Point getNextPosition(Direction direction, Point position)
   {
     switch (direction) {
@@ -219,92 +319,6 @@ namespace hedeya {
 
       move(direction, position);
     }
-  }
-}
-
-int main(int argc, char* argv[])
-{
-  try {
-    if (argc < 4) {
-      throw std::invalid_argument("Not enough arguments");
-    }
-    if (argc > 4) {
-      throw std::invalid_argument("Too many arguments");
-    }
-
-    int num_arg = 0;
-
-    try {
-      std::size_t end_position = 0;
-
-      num_arg = std::stoi(argv[1], &end_position);
-      if (end_position != std::string(argv[1]).length()) {
-        throw std::invalid_argument("First parameter is not a number");
-      }
-    } catch (const std::invalid_argument&) {
-      throw std::invalid_argument("First parameter is not a number");
-    }
-
-    if (num_arg > 2 || num_arg < 1) {
-      throw std::invalid_argument("First parameter is out of range");
-    }
-
-    const bool USE_DYNAMIC_ARRAY = (num_arg == 2);
-
-    const std::string INPUT_FILE_PATH = argv[2];
-    const std::string OUTPUT_FILE_PATH = argv[3];
-
-    std::ifstream input_file(INPUT_FILE_PATH);
-    if (!input_file.is_open()) {
-      throw hedeya::InvalidMatrixError("Input file failed to open");
-    }
-
-    hedeya::Dimensions dimensions{0, 0};
-    if (!(input_file >> dimensions.rows >> dimensions.columns)) {
-      throw hedeya::InvalidMatrixError("Number of rows/columns is not a valid number");
-    }
-
-    if (dimensions.rows < 0 || dimensions.columns < 0) {
-      throw hedeya::InvalidMatrixError("Number of rows/columns cannot be negative");
-    }
-
-    const std::size_t total_elements = dimensions.rows * dimensions.columns;
-
-    if (USE_DYNAMIC_ARRAY) {
-      std::vector< int > dynamic_matrix(total_elements, 0);
-
-      hedeya::fillMatrix(input_file, dimensions, dynamic_matrix);
-      hedeya::rejectExtraData(input_file);
-
-      hedeya::iterateSpiral(dimensions, dynamic_matrix.data(), hedeya::subtractDifferenceFromElement);
-
-      hedeya::outputMatrixToFile(dimensions, dynamic_matrix, OUTPUT_FILE_PATH);
-    } else {
-      if (total_elements > hedeya::MAX_ELEMENTS) {
-        throw hedeya::InvalidMatrixError("Matrix exceeds fixed-size array capacity");
-      }
-
-      std::array< int, hedeya::MAX_ELEMENTS > static_matrix{};
-
-      hedeya::fillMatrix(input_file, dimensions, static_matrix.data());
-      hedeya::rejectExtraData(input_file);
-
-      hedeya::iterateSpiral(dimensions, static_matrix.data(), hedeya::subtractDifferenceFromElement);
-
-      hedeya::outputMatrixToFile(dimensions, static_matrix.data(), OUTPUT_FILE_PATH);
-    }
-
-    return EXIT_SUCCESS;
-
-  } catch (const hedeya::InvalidMatrixError& error) {
-    std::cerr << "Invalid matrix error: " << error.what() << "\n";
-    return hedeya::INVALID_MATRIX_ERROR;
-  } catch (const std::invalid_argument& error) {
-    std::cerr << "Invalid argument error: " << error.what() << "\n";
-    return EXIT_FAILURE;
-  } catch (const std::exception& error) {
-    std::cerr << "Error: " << error.what() << "\n";
-    return EXIT_FAILURE;
   }
 }
 
