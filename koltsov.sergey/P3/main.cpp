@@ -8,7 +8,7 @@ namespace koltsov
 {
   const std::string ERR_ARGS = "Incorrect number of arguments";
   const std::string ERR_TASK_NUM = "Incorrect task number";
-  const std::string ERR_OPEN_FILE = "Cannot open your file";
+  const std::string ERR_OPEN_FILE = "Cannot open file";
   const std::string ERR_MATRIX = "Invalid matrix data";
 
   const int EXIT_SUCCESS_CODE = 0;
