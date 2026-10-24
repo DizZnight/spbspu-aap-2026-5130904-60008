@@ -127,7 +127,7 @@ namespace kovalenko {
     writeResult(config.output_path, result);
     return 0;
   }
-} // namespace kovalenko
+}
 
 int main(int argc, char *argv[])
 {
