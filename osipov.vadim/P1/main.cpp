@@ -1,12 +1,11 @@
 #include <iostream>
 
-
-int main()
-{
+int main() {
+  const int max_size_2 = 10000;
   int cifra = 0;
-  int posledovatelnost[10000];
+  int posledovatelnost[max_size_2];
   int posledovatelnost_size = 0;
-  int otvet[10000];
+  int otvet[max_size_2];
   int otvet_size = 0;
   int streak = 1;
 
@@ -51,5 +50,5 @@ int main()
   }
   std::cout << max_streak << "\n";
 
- return 0;
+  return 0;
 }
