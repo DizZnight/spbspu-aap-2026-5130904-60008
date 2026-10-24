@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
       std::cerr << "Error: First parameter must be 1 or 2.\n";
       return 1;
     }
-    
+
     int parameter = std::stoi(parameter_string);
 
     if (parameter == 1) {
@@ -39,11 +39,11 @@ int main(int argc, char *argv[])
     else if (parameter == 2) {
       savenko::processFileWithDynamicArray(input_filename, output_filename);
     }
-  } 
+  }
   catch (const std::exception &e) {
     std::cerr << "Error: " << e.what() << "\n";
     return 1;
-  } 
+  }
   catch (int error_code) {
     return error_code;
   }
@@ -127,7 +127,7 @@ void savenko::writeMatrixToFile(const std::string &output_filename, const int *m
   for (int i = 0; i < total_elements; ++i) {
     outFile << " " << matrix[i];
   }
-  
+
   outFile << "\n";
   outFile.close();
 }
@@ -167,7 +167,7 @@ void savenko::processFileWithDynamicArray(const std::string &input_filename, con
     readMatrixFromFile(input_filename, matrix, total_elements, rows_check, cols_check);
     applyLayerIncrement(matrix, rows, cols);
     writeMatrixToFile(output_filename, matrix, rows, cols);
-  } 
+  }
   catch (int error_code) {
     delete[] matrix;
     throw error_code;
