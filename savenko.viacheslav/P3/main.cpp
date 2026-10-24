@@ -1,24 +1,26 @@
 #include <algorithm>
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <exception>
 
 namespace savenko {
-
-void readMatrixFromFile(const std::string &input_filename, int *matrix, int max_capacity, int &rows, int &cols);
+void readMatrixFromFile(const std::string &input_filename, int *matrix,
+                        int max_capacity, int &rows, int &cols);
 void applyLayerIncrement(int *matrix, int rows, int cols);
-void writeMatrixToFile(const std::string &output_filename, const int *matrix, int rows, int cols);
+void writeMatrixToFile(const std::string &output_filename, const int *matrix,
+                       int rows, int cols);
 
-void processFileWithStaticArray(const std::string &input_filename, const std::string &output_filename);
-void processFileWithDynamicArray(const std::string &input_filename, const std::string &output_filename);
+void processFileWithStaticArray(const std::string &input_filename,
+                                const std::string &output_filename);
+void processFileWithDynamicArray(const std::string &input_filename,
+                                 const std::string &output_filename);
+} // namespace savenko
 
-}
-
-int main(const int argc, const char * const argv[])
-{
+int main(const int argc, const char *const argv[]) {
   if (argc != 4) {
-    std::cerr << "Error: Invalid number of arguments. Expected: ./lab num input output\n";
+    std::cerr << "Error: Invalid number of arguments. Expected: ./lab num "
+                 "input output\n";
     return 1;
   }
 
@@ -49,8 +51,8 @@ int main(const int argc, const char * const argv[])
   return 0;
 }
 
-void savenko::readMatrixFromFile(const std::string &input_filename, int *matrix, int max_capacity, int &rows, int &cols)
-{
+void savenko::readMatrixFromFile(const std::string &input_filename, int *matrix,
+                                 int max_capacity, int &rows, int &cols) {
   std::ifstream in_file(input_filename);
   if (!in_file.is_open()) {
     std::cerr << "Error: Failed to open the file for reading!\n";
@@ -94,8 +96,7 @@ void savenko::readMatrixFromFile(const std::string &input_filename, int *matrix,
   in_file.close();
 }
 
-void savenko::applyLayerIncrement(int *matrix, int rows, int cols)
-{
+void savenko::applyLayerIncrement(int *matrix, int rows, int cols) {
   for (int i = 0; i < rows; ++i) {
     for (int j = 0; j < cols; ++j) {
       const int dist_top = i;
@@ -103,16 +104,17 @@ void savenko::applyLayerIncrement(int *matrix, int rows, int cols)
       const int dist_left = j;
       const int dist_right = cols - 1 - j;
 
-      const int layer = std::min({dist_top, dist_bottom, dist_left, dist_right});
-      int index_1d = i * cols + j;
+      const int layer =
+          std::min({dist_top, dist_bottom, dist_left, dist_right});
+      const int index_1d = i * cols + j;
 
       matrix[index_1d] = matrix[index_1d] + (layer + 1);
     }
   }
 }
 
-void savenko::writeMatrixToFile(const std::string &output_filename, const int *matrix, int rows, int cols)
-{
+void savenko::writeMatrixToFile(const std::string &output_filename,
+                                const int *matrix, int rows, int cols) {
   std::ofstream out_file(output_filename);
   if (!out_file.is_open()) {
     std::cerr << "Error: Failed to open file for writing!\n";
@@ -121,7 +123,7 @@ void savenko::writeMatrixToFile(const std::string &output_filename, const int *m
 
   out_file << rows << " " << cols;
 
-  int total_elements = rows * cols;
+  const int total_elements = rows * cols;
   for (int i = 0; i < total_elements; ++i) {
     out_file << " " << matrix[i];
   }
@@ -130,8 +132,8 @@ void savenko::writeMatrixToFile(const std::string &output_filename, const int *m
   out_file.close();
 }
 
-void savenko::processFileWithStaticArray(const std::string &input_filename, const std::string &output_filename)
-{
+void savenko::processFileWithStaticArray(const std::string &input_filename,
+                                         const std::string &output_filename) {
   const int max_elements = 10000;
   int matrix[max_elements] = {};
   int rows = 0;
@@ -142,27 +144,29 @@ void savenko::processFileWithStaticArray(const std::string &input_filename, cons
   writeMatrixToFile(output_filename, matrix, rows, cols);
 }
 
-void savenko::processFileWithDynamicArray(const std::string &input_filename, const std::string &output_filename)
-{
+void savenko::processFileWithDynamicArray(const std::string &input_filename,
+                                          const std::string &output_filename) {
   int rows = 0;
   int cols = 0;
 
   {
     std::ifstream in_file(input_filename);
-    if (!in_file.is_open() || !(in_file >> rows >> cols) || rows < 0 || cols < 0) {
+    if (!in_file.is_open() || !(in_file >> rows >> cols) || rows < 0 ||
+        cols < 0) {
       std::cerr << "Error: Invalid matrix or dimensions.\n";
       throw 2;
     }
   }
 
-  int total_elements = rows * cols;
-  int * const matrix = new int[total_elements]();
+  const int total_elements = rows * cols;
+  int *const matrix = new int[total_elements]();
 
   try {
     int rows_check = 0;
     int cols_check = 0;
 
-    readMatrixFromFile(input_filename, matrix, total_elements, rows_check, cols_check);
+    readMatrixFromFile(input_filename, matrix, total_elements, rows_check,
+                       cols_check);
     applyLayerIncrement(matrix, rows, cols);
     writeMatrixToFile(output_filename, matrix, rows, cols);
   } catch (int error_code) {
