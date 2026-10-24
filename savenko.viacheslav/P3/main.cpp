@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <exception>
 
 namespace savenko {
 
@@ -14,7 +15,7 @@ void processFileWithDynamicArray(const std::string &input_filename, const std::s
 
 }
 
-int main(int argc, char *argv[])
+int main(const int argc, const char * const argv[])
 {
   if (argc != 4) {
     std::cerr << "Error: Invalid number of arguments. Expected: ./lab num input output\n";
@@ -22,16 +23,16 @@ int main(int argc, char *argv[])
   }
 
   try {
-    std::string parameter_string = argv[1];
-    std::string input_filename = argv[2];
-    std::string output_filename = argv[3];
+    const std::string parameter_string = argv[1];
+    const std::string input_filename = argv[2];
+    const std::string output_filename = argv[3];
 
     if (parameter_string != "1" && parameter_string != "2") {
       std::cerr << "Error: First parameter must be 1 or 2.\n";
       return 1;
     }
 
-    int parameter = std::stoi(parameter_string);
+    const int parameter = std::stoi(parameter_string);
 
     if (parameter == 1) {
       savenko::processFileWithStaticArray(input_filename, output_filename);
@@ -61,7 +62,7 @@ void savenko::readMatrixFromFile(const std::string &input_filename, int *matrix,
     throw 2;
   }
 
-  int total_elements = rows * cols;
+  const int total_elements = rows * cols;
   if (total_elements > max_capacity) {
     std::cerr << "Error: Matrix exceeds allocated capacity.\n";
     throw 2;
@@ -97,12 +98,12 @@ void savenko::applyLayerIncrement(int *matrix, int rows, int cols)
 {
   for (int i = 0; i < rows; ++i) {
     for (int j = 0; j < cols; ++j) {
-      int dist_top = i;
-      int dist_bottom = rows - 1 - i;
-      int dist_left = j;
-      int dist_right = cols - 1 - j;
+      const int dist_top = i;
+      const int dist_bottom = rows - 1 - i;
+      const int dist_left = j;
+      const int dist_right = cols - 1 - j;
 
-      int layer = std::min({dist_top, dist_bottom, dist_left, dist_right});
+      const int layer = std::min({dist_top, dist_bottom, dist_left, dist_right});
       int index_1d = i * cols + j;
 
       matrix[index_1d] = matrix[index_1d] + (layer + 1);
@@ -148,15 +149,14 @@ void savenko::processFileWithDynamicArray(const std::string &input_filename, con
 
   {
     std::ifstream in_file(input_filename);
-    if (!in_file.is_open() || !(in_file >> rows >> cols) || rows <= 0 ||
-        cols <= 0) {
+    if (!in_file.is_open() || !(in_file >> rows >> cols) || rows < 0 || cols < 0) {
       std::cerr << "Error: Invalid matrix or dimensions.\n";
       throw 2;
     }
   }
 
   int total_elements = rows * cols;
-  int *matrix = new int[total_elements]();
+  int * const matrix = new int[total_elements]();
 
   try {
     int rows_check = 0;
