@@ -2,6 +2,8 @@
 #include <stdexcept>
 #include <fstream>
 #include <string>
+#include <cstddef>
+#include <cstdio>
 
 namespace stremetskiy
 {
@@ -86,7 +88,7 @@ int main(int argc, char *argv[])
     }
     else if (variant == 2)
     {
-      int **array = stremetskiy::fillArr(input, row, col);
+      int **const array = stremetskiy::fillArr(input, row, col);
 
       for (int i = 1; i < (row - 1); i++)
       {
