@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
 
 void bakoz::inputdataStatic(std::ifstream& infile, std::ofstream& outfile)
 {
-  int arr[bakoz::BUFFER] = { 0 };
+  int arr[bakoz::BUFFER] = {0};
   bool has_matrices = false;
 
   while (true)
@@ -214,7 +214,7 @@ void bakoz::inputdataDynamic(std::ifstream& infile, std::ofstream& outfile)
     }
 
     const int quan_elem = col * line;
-    const bakoz::Matrix mat{line, col, new int[quan_elem] { 0 }};
+    const bakoz::Matrix mat{line, col, new int[quan_elem] {0}};
 
     for (int i = 0; i < quan_elem; ++i)
     {
