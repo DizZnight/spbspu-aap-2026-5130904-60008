@@ -19,6 +19,7 @@ namespace koltsov
   const int LENGTH = 10000;
 
   int parseTask(const std::string& raw);
+  int parseInteger(const std::string& token);
   void readMatrix(std::ifstream& input, int* data, int rows, int cols);
   int countSaddlesElements(const int* data, int rows, int cols);
   int runStaticArr(std::ifstream& input, int rows, int cols);
@@ -47,8 +48,19 @@ int main(int argc, char* argv[])
 
     int rows = 0;
     int cols = 0;
+    std::string row_token;
+    std::string col_token;
 
-    if (!(input >> rows >> cols) || rows < 0 || cols < 0)
+    // Читаем размеры строго как токены, чтобы поймать "2.5"
+    if (!(input >> row_token) || !(input >> col_token))
+    {
+      throw std::runtime_error(koltsov::ERR_MATRIX);
+    }
+
+    rows = koltsov::parseInteger(row_token);
+    cols = koltsov::parseInteger(col_token);
+
+    if (rows < 0 || cols < 0)
     {
       throw std::runtime_error(koltsov::ERR_MATRIX);
     }
@@ -106,22 +118,47 @@ int koltsov::parseTask(const std::string& raw)
   return value;
 }
 
+// Новая функция строгого парсинга
+int koltsov::parseInteger(const std::string& token)
+{
+  try
+  {
+    std::size_t used = 0;
+    const int value = std::stoi(token, &used);
+
+    if (used != token.size())
+    {
+      throw std::runtime_error(ERR_MATRIX);
+    }
+
+    return value;
+  }
+  catch (const std::exception&)
+  {
+    throw std::runtime_error(ERR_MATRIX);
+  }
+}
+
 void koltsov::readMatrix(std::ifstream& input, int* data, int rows, int cols)
 {
+  std::string token;
+
   for (int i = 0; i < rows; ++i)
   {
     for (int j = 0; j < cols; ++j)
     {
-      if (!(input >> data[i * cols + j]))
+      if (!(input >> token))
       {
         throw std::runtime_error(ERR_MATRIX);
       }
+
+      // Используем строгий парсер
+      data[i * cols + j] = parseInteger(token);
     }
   }
 
-  int extra = 0;
-
-  if (input >> extra)
+  // Проверка на лишние токены
+  if (input >> token)
   {
     throw std::runtime_error(ERR_MATRIX);
   }
@@ -195,13 +232,11 @@ int koltsov::runDynamicArr(std::ifstream& input, int rows, int cols)
 {
   if (rows == 0 || cols == 0)
   {
-    int extra = 0;
-
+    std::string extra;
     if (input >> extra)
     {
       throw std::runtime_error(ERR_MATRIX);
     }
-
     return 0;
   }
 
