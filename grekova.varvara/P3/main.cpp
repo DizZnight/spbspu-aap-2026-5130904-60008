@@ -109,9 +109,9 @@ namespace grekova {
       }
     }
 
-    char c;
+    char c = 0;
     while (input.get(c)) {
-      if (!std::isspace(static_cast<unsigned char>(c))) {
+      if (!std::isspace(static_cast <unsigned char> (c))) {
         throw std::runtime_error(INV_VAL);
       }
     }
@@ -142,9 +142,9 @@ namespace grekova {
       }
     }
 
-    char c;
+    char c = 0;
     while (input.get(c)) {
-      if (!std::isspace(static_cast<unsigned char>(c))) {
+      if (!std::isspace(static_cast <unsigned char> (c))) {
         for (int k = 0; k < row; ++k) {
           delete[] matrix[k];
         }
