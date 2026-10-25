@@ -64,7 +64,6 @@ int main(int argc, char *argv[])
       {
         for (int j = 1; j < (col - 1); j++)
         {
-
           const int a1 = array[((i - 1) * col) + j - 1];
           const int a2 = array[((i - 1) * col) + j];
           const int a3 = array[((i - 1) * col) + j + 1];
