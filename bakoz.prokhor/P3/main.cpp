@@ -193,9 +193,6 @@ void bakoz::inputdataDynamic(std::ifstream& infile, std::ofstream& outfile)
       }
       break;
     }
-
-
-
     int line = 0;
     infile >> line;
 
