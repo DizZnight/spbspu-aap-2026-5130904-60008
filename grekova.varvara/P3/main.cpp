@@ -6,17 +6,17 @@
 #include <stdexcept>
 #include <string>
 
-namespace grekova { 
-const int MAX_SIZE_ARR = 10000; 
-const std::string INV_VAL = "Invalid matrix data"; 
-const std::string INC_NUM_OF_ARG = "Incorrect number of arguments"; 
-const std::string INC_NUM = "Incorrect task number"; 
+namespace grekova {
+  const int MAX_SIZE_ARR = 10000;
+  const std::string INV_VAL = "Invalid matrix data";
+  const std::string INC_NUM_OF_ARG = "Incorrect number of arguments";
+  const std::string INC_NUM = "Incorrect task number";
 
-void getStaticMatrix(std::ifstream &input, int row, int col, int *out_buffer); 
-void getDynamicMatrix(std::ifstream &input, int row, int col, int **&matrix); 
-void processSpiral(int **matrix, int rows, int cols); 
-void writeMatrixToFile(const std::string &filename, int **matrix, int rows, int cols); 
-void freeMatrix(int **matrix, int rows, int mode); 
+  void getStaticMatrix(std::ifstream &input, int row, int col, int *out_buffer);
+  void getDynamicMatrix(std::ifstream &input, int row, int col, int **&matrix);
+  void processSpiral(int **matrix, int rows, int cols);
+  void writeMatrixToFile(const std::string &filename, int **matrix, int rows, int cols);
+  void freeMatrix(int **matrix, int rows, int mode);
 }
 
 int main(int argc, char *argv[])
@@ -91,115 +91,115 @@ int main(int argc, char *argv[])
   }
 }
 
-namespace grekova { 
-void getStaticMatrix(std::ifstream &input, int row, int col, int *out_buffer){
-  if (row != 0 && col > MAX_SIZE_ARR / row) {
-    throw std::invalid_argument(INV_VAL);
-  }
-
-  int arr[MAX_SIZE_ARR] = {0};
-
-  for (int i = 0; i < row; ++i) {
-    for (int j = 0; j < col; ++j) {
-      if (!(input >> arr[i * col + j])) {
-        throw std::invalid_argument(INV_VAL);
-      }
+namespace grekova {
+  void getStaticMatrix(std::ifstream &input, int row, int col, int *out_buffer) {
+    if (row != 0 && col > MAX_SIZE_ARR / row) {
+      throw std::invalid_argument(INV_VAL);
     }
-  }
 
-  int extra = 0;
-  if (input >> extra) {
-   throw std::invalid_argument(INV_VAL);
-  }
+    int arr[MAX_SIZE_ARR] = {0};
 
-  const int total_elements = row * col;
-  for (int i = 0; i < total_elements; ++i) {
-    out_buffer[i] = arr[i];
-  }
-}
-
-void getDynamicMatrix(std::ifstream &input, int row, int col, int **&matrix){
-  matrix = new int *[row];
-  for (int i = 0; i < row; ++i) {
-    matrix[i] = new int[col];
-  }
-
-  for (int i = 0; i < row; ++i) {
-    for (int j = 0; j < col; ++j) {
-      if (!(input >> matrix[i][j])) {
-        for (int k = 0; k <= i; ++k) {
-          delete[] matrix[k];
+    for (int i = 0; i < row; ++i) {
+      for (int j = 0; j < col; ++j) {
+        if (!(input >> arr[i * col + j])) {
+          throw std::invalid_argument(INV_VAL);
         }
-        delete[] matrix;
-        matrix = nullptr;
-        throw std::invalid_argument(INV_VAL);
+      }
+    }
+
+    int extra = 0;
+    if (input >> extra) {
+      throw std::invalid_argument(INV_VAL);
+    }
+
+    const int total_elements = row * col;
+    for (int i = 0; i < total_elements; ++i) {
+      out_buffer[i] = arr[i];
+    }
+  }
+
+  void getDynamicMatrix(std::ifstream &input, int row, int col, int **&matrix) {
+    matrix = new int *[row];
+    for (int i = 0; i < row; ++i) {
+      matrix[i] = new int[col];
+    }
+
+    for (int i = 0; i < row; ++i) {
+      for (int j = 0; j < col; ++j) {
+        if (!(input >> matrix[i][j])) {
+          for (int k = 0; k <= i; ++k) {
+            delete[] matrix[k];
+          }
+          delete[] matrix;
+          matrix = nullptr;
+          throw std::invalid_argument(INV_VAL);
+        }
+      }
+    }
+
+    int extra = 0;
+    if (input >> extra) {
+      for (int k = 0; k < row; ++k) {
+        delete[] matrix[k];
+      }
+      delete[] matrix;
+      matrix = nullptr;
+      throw std::invalid_argument(INV_VAL);
+    }
+  }
+
+  void processSpiral(int **matrix, int rows, int cols) {
+    if (rows <= 0 || cols <= 0)
+      return;
+
+    int top = 0, bottom = rows - 1, left = 0, right = cols - 1, increment = 1;
+
+    while (top <= bottom && left <= right) {
+      for (int j = left; j <= right; ++j) {
+        matrix[bottom][j] += increment++;
+      }
+      bottom--;
+
+      for (int i = bottom; i >= top; --i) {
+        matrix[i][right] += increment++;
+      }
+      right--;
+
+      if (top <= bottom) {
+        for (int j = right; j >= left; --j) {
+          matrix[top][j] += increment++;
+        }
+        top++;
+      }
+
+      if (left <= right) {
+        for (int i = top; i <= bottom; ++i) {
+          matrix[i][left] += increment++;
+        }
+        left++;
       }
     }
   }
 
-  int extra = 0;
-  if (input >> extra) {
-    for (int k = 0; k < row; ++k) {
-      delete[] matrix[k];
-    }
-    delete[] matrix;
-    matrix = nullptr;
-    throw std::invalid_argument(INV_VAL);
-  }
-}
+  void writeMatrixToFile(const std::string &filename, int **matrix, int rows, int cols) {
+    std::ofstream fout(filename);
 
-void processSpiral(int **matrix, int rows, int cols){
-  if (rows <= 0 || cols <= 0)
-    return;
-
-  int top = 0, bottom = rows - 1, left = 0, right = cols - 1, increment = 1;
-
-  while (top <= bottom && left <= right) {
-    for (int j = left; j <= right; ++j) {
-      matrix[bottom][j] += increment++;
-    }
-    bottom--;
-
-    for (int i = bottom; i >= top; --i) {
-      matrix[i][right] += increment++;
-    }
-    right--;
-
-    if (top <= bottom) {
-      for (int j = right; j >= left; --j) {
-        matrix[top][j] += increment++;
-      }
-      top++;
-    }
-
-    if (left <= right) {
-      for (int i = top; i <= bottom; ++i) {
-        matrix[i][left] += increment++;
-      }
-      left++;
-    }
-  }
-}
-
-void writeMatrixToFile(const std::string &filename, int **matrix, int rows, int cols){
-  std::ofstream fout(filename);
-
-  fout << rows << " " << cols << " ";
-  for (int i = 0; i < rows; ++i) {
-    for (int j = 0; j < cols; ++j) {
-      fout << matrix[i][j] << " ";
-    }
-  }
-}
-
-void freeMatrix(int **matrix, int rows, int mode){
-  if (matrix) {
-    if (mode == 2) {
-      for (int i = 0; i < rows; ++i) {
-        delete[] matrix[i];
+    fout << rows << " " << cols << " ";
+    for (int i = 0; i < rows; ++i) {
+      for (int j = 0; j < cols; ++j) {
+        fout << matrix[i][j] << " ";
       }
     }
-    delete[] matrix;
   }
-}
+
+  void freeMatrix(int **matrix, int rows, int mode) {
+    if (matrix) {
+      if (mode == 2) {
+        for (int i = 0; i < rows; ++i) {
+          delete[] matrix[i];
+        }
+      }
+      delete[] matrix;
+    }
+  }
 }
