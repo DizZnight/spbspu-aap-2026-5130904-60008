@@ -15,11 +15,10 @@ namespace hedeya {
   const int INVALID_MATRIX_ERROR = 2;
 
   class InvalidMatrixError: public std::runtime_error {
-    public:
+  public:
     explicit InvalidMatrixError(const std::string& message = "Invalid matrix"):
       std::runtime_error(message)
-    {
-    }
+    {}
   };
 
   enum Direction { UP, DOWN, LEFT, RIGHT };
@@ -52,7 +51,7 @@ namespace hedeya {
   Direction getNextDirection(Point position, Direction last_direction, Bounds bounds, const std::set< Point >& seen);
   Point getNextPosition(Direction direction, Point position);
   void move(Direction direction, Point& position);
-  void iterateSpiral(Dimensions dimensions, long* matrix, const std::function< void(long&, std::size_t) >& element_func);
+  void iterateSpiral(Dimensions dimensions, long* matrix, const std::function< void(long&, std::size_t) >& func);
   void outputMatrixToFile(Dimensions dimensions, const long* matrix, const std::string& output_file_path);
   void subtractDifferenceFromElement(long& element, std::size_t index);
 }
