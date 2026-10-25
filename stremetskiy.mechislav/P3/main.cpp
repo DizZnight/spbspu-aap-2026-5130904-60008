@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
   int count = 0;
   int variant = 0;
 
-  size_t parsed_chars = 0;
+  size_t parse_chars = 0;
 
   std::string variant_str = "";
   std::string input = "";
@@ -42,9 +42,9 @@ int main(int argc, char *argv[])
 
     variant_str = argv[1];
 
-    variant = std::stoi(argv[1], &parsed_chars);
+    variant = std::stoi(argv[1], &parse_chars);
 
-    if (parsed_chars != variant_str.length())
+    if (parse_chars != variant_str.length())
     {
       throw std::runtime_error("First value is not a num\n");
     }
