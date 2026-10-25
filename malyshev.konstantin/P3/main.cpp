@@ -149,7 +149,7 @@ namespace malyshev
     {
       return error_data;
     }
-    
+
     const size_t total_el = rows * cols;
     if (total_el > 2147483647)
     {
