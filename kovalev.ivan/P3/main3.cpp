@@ -4,6 +4,7 @@
 #include <cerrno>
 #include <string>
 #include <stdexcept>
+#include <exception>
 
 namespace kovalev
 {
