@@ -15,6 +15,7 @@ namespace bakoz
   const std::string FIRST_NOT_NUMBER = "First parameter is not a number";
   const std::string INCOR_FILE_NAME = "Incorrect file name";
   const std::string NOT_MAT_IN_FILE = "No matrix found in the file";
+  const std::string CORRUPTED_DATA = "Incorrect format of data";
 
   constexpr int ARG_EXIT_CODE = 1;
   constexpr int MAT_EXIT_CODE = 2;
@@ -135,20 +136,20 @@ void bakoz::inputdataStatic(std::ifstream& infile, std::ofstream& outfile)
 
     if (infile.fail())
     {
-      throw std::invalid_argument(bakoz::NOT_MAT_IN_FILE);
+      throw std::invalid_argument(has_matrices ? bakoz::CORRUPTED_DATA : bakoz::NOT_MAT_IN_FILE);
     }
 
     int col = 0;
     if (!(infile >> col))
     {
-      throw std::invalid_argument(bakoz::NOT_MAT_IN_FILE);
+      throw std::invalid_argument(has_matrices ? bakoz::CORRUPTED_DATA : bakoz::NOT_MAT_IN_FILE);
     }
 
     has_matrices = true;
 
     if (line < 0 || col < 0)
     {
-      throw std::invalid_argument(bakoz::NOT_MAT_IN_FILE);
+      throw std::invalid_argument(bakoz::CORRUPTED_DATA);
     }
 
     if (line == 0 && col == 0)
@@ -159,7 +160,7 @@ void bakoz::inputdataStatic(std::ifstream& infile, std::ofstream& outfile)
 
     if (col != 0 && line > bakoz::BUFFER / col)
     {
-      throw std::invalid_argument(bakoz::NOT_MAT_IN_FILE);
+      throw std::invalid_argument(bakoz::CORRUPTED_DATA);
     }
 
     const int quan_elem = col * line;
@@ -169,7 +170,7 @@ void bakoz::inputdataStatic(std::ifstream& infile, std::ofstream& outfile)
     {
       if (!(infile >> mat.start[i]))
       {
-        throw std::invalid_argument(bakoz::NOT_MAT_IN_FILE);
+        throw std::invalid_argument(bakoz::CORRUPTED_DATA);
       }
     }
 
@@ -198,20 +199,20 @@ void bakoz::inputdataDynamic(std::ifstream& infile, std::ofstream& outfile)
 
     if (infile.fail())
     {
-      throw std::invalid_argument(bakoz::NOT_MAT_IN_FILE);
+      throw std::invalid_argument(has_matrices ? bakoz::CORRUPTED_DATA : bakoz::NOT_MAT_IN_FILE);
     }
 
     int col = 0;
     if (!(infile >> col))
     {
-      throw std::invalid_argument(bakoz::NOT_MAT_IN_FILE);
+      throw std::invalid_argument(has_matrices ? bakoz::CORRUPTED_DATA : bakoz::NOT_MAT_IN_FILE);
     }
 
     has_matrices = true;
 
     if (line < 0 || col < 0)
     {
-      throw std::invalid_argument(bakoz::NOT_MAT_IN_FILE);
+      throw std::invalid_argument(bakoz::CORRUPTED_DATA);
     }
 
     if (line == 0 && col == 0)
@@ -222,7 +223,7 @@ void bakoz::inputdataDynamic(std::ifstream& infile, std::ofstream& outfile)
 
     if (col != 0 && line > bakoz::INT_MAX_LIMIT / col)
     {
-      throw std::invalid_argument(bakoz::NOT_MAT_IN_FILE);
+      throw std::invalid_argument(bakoz::CORRUPTED_DATA);
     }
 
     const int quan_elem = col * line;
@@ -233,7 +234,7 @@ void bakoz::inputdataDynamic(std::ifstream& infile, std::ofstream& outfile)
       if (!(infile >> mat.start[i]))
       {
         delete[] mat.start;
-        throw std::invalid_argument(bakoz::NOT_MAT_IN_FILE);
+        throw std::invalid_argument(bakoz::CORRUPTED_DATA);
       }
     }
 
