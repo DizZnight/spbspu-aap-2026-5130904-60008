@@ -1,23 +1,22 @@
 #include <cctype>
 #include <climits>
-#include <cstddef>
 #include <fstream>
 #include <iostream>
 #include <new>
 #include <stdexcept>
 #include <string>
 
-namespace grekova {
-const int MAX_SIZE_ARR = 10000;
-const std::string INV_VAL = "Invalid matrix data";
-const std::string INC_NUM_OF_ARG = "Incorrect number of arguments";
-const std::string INC_NUM = "Incorrect task number";
+namespace grekova { 
+const int MAX_SIZE_ARR = 10000; 
+const std::string INV_VAL = "Invalid matrix data"; 
+const std::string INC_NUM_OF_ARG = "Incorrect number of arguments"; 
+const std::string INC_NUM = "Incorrect task number"; 
 
-void getStaticArray(std::ifstream &input, int row, int col, int *out_buffer);
-void getDynamicMatrix(std::ifstream &input, int row, int col, int **&matrix);
-void processSpiral(int **matrix, int rows, int cols);
-void writeMatrixToFile(const std::string &filename, int **matrix, int rows, int cols);
-void freeMatrix(int **matrix, int rows, int mode);
+void getStaticMatrix(std::ifstream &input, int row, int col, int *out_buffer); 
+void getDynamicMatrix(std::ifstream &input, int row, int col, int **&matrix); 
+void processSpiral(int **matrix, int rows, int cols); 
+void writeMatrixToFile(const std::string &filename, int **matrix, int rows, int cols); 
+void freeMatrix(int **matrix, int rows, int mode); 
 }
 
 int main(int argc, char *argv[])
@@ -27,14 +26,14 @@ int main(int argc, char *argv[])
       throw std::invalid_argument(grekova::INC_NUM_OF_ARG);
     }
 
-    std::string num = argv[1];
+    const std::string num = argv[1];
     if (num != "1" && num != "2") {
       throw std::invalid_argument(grekova::INC_NUM);
     }
 
-    int mode = (num == "1") ? 1 : 2;
-    std::string input_filename = argv[2];
-    std::string output_filename = argv[3];
+    const int mode = (num == "1") ? 1 : 2;
+    const std::string input_filename = argv[2];
+    const std::string output_filename = argv[3];
 
     std::ifstream fin(input_filename);
     if (!fin.is_open()) {
@@ -64,7 +63,7 @@ int main(int argc, char *argv[])
         throw std::runtime_error(grekova::INV_VAL);
       }
 
-      grekova::getStaticArray(fin, rows, cols, static_buffer);
+      grekova::getStaticMatrix(fin, rows, cols, static_buffer);
 
       matrix = new int *[rows];
       for (int i = 0; i < rows; ++i) {
@@ -92,8 +91,8 @@ int main(int argc, char *argv[])
   }
 }
 
-namespace grekova {
-void getStaticArray(std::ifstream &input, int row, int col, int *out_buffer) {
+namespace grekova { 
+void getStaticMatrix(std::ifstream &input, int row, int col, int *out_buffer){
   if (row != 0 && col > MAX_SIZE_ARR / row) {
     throw std::invalid_argument(INV_VAL);
   }
@@ -108,18 +107,18 @@ void getStaticArray(std::ifstream &input, int row, int col, int *out_buffer) {
     }
   }
 
-  int extra;
+  int extra = 0;
   if (input >> extra) {
    throw std::invalid_argument(INV_VAL);
   }
 
-  int total_elements = row * col;
+  const int total_elements = row * col;
   for (int i = 0; i < total_elements; ++i) {
     out_buffer[i] = arr[i];
   }
 }
 
-void getDynamicMatrix(std::ifstream &input, int row, int col, int **&matrix) {
+void getDynamicMatrix(std::ifstream &input, int row, int col, int **&matrix){
   matrix = new int *[row];
   for (int i = 0; i < row; ++i) {
     matrix[i] = new int[col];
@@ -138,7 +137,7 @@ void getDynamicMatrix(std::ifstream &input, int row, int col, int **&matrix) {
     }
   }
 
-  int extra;
+  int extra = 0;
   if (input >> extra) {
     for (int k = 0; k < row; ++k) {
       delete[] matrix[k];
@@ -149,7 +148,7 @@ void getDynamicMatrix(std::ifstream &input, int row, int col, int **&matrix) {
   }
 }
 
-void processSpiral(int **matrix, int rows, int cols) {
+void processSpiral(int **matrix, int rows, int cols){
   if (rows <= 0 || cols <= 0)
     return;
 
@@ -182,7 +181,7 @@ void processSpiral(int **matrix, int rows, int cols) {
   }
 }
 
-void writeMatrixToFile(const std::string &filename, int **matrix, int rows, int cols) {
+void writeMatrixToFile(const std::string &filename, int **matrix, int rows, int cols){
   std::ofstream fout(filename);
 
   fout << rows << " " << cols << " ";
@@ -193,7 +192,7 @@ void writeMatrixToFile(const std::string &filename, int **matrix, int rows, int 
   }
 }
 
-void freeMatrix(int **matrix, int rows, int mode) {
+void freeMatrix(int **matrix, int rows, int mode){
   if (matrix) {
     if (mode == 2) {
       for (int i = 0; i < rows; ++i) {
