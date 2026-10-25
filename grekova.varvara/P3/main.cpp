@@ -11,6 +11,7 @@ namespace grekova {
   const std::string INV_VAL = "Invalid matrix data";
   const std::string INC_NUM_OF_ARG = "Incorrect number of arguments";
   const std::string INC_NUM = "Incorrect task number";
+  const std::string FILE_ERR = "File error";
 
   void getStaticMatrix(std::ifstream &input, int row, int col, int *out_buffer);
   void getDynamicMatrix(std::ifstream &input, int row, int col, int **&matrix);
@@ -95,7 +96,7 @@ namespace grekova {
   void getStaticMatrix(std::ifstream &input, int row, int col, int *out_buffer)
   {
     if (row != 0 && col > MAX_SIZE_ARR / row) {
-      throw std::invalid_argument(INV_VAL);
+      throw std::runtime_error(INV_VAL);
     }
 
     int arr[MAX_SIZE_ARR] = {0};
@@ -103,14 +104,16 @@ namespace grekova {
     for (int i = 0; i < row; ++i) {
       for (int j = 0; j < col; ++j) {
         if (!(input >> arr[i * col + j])) {
-          throw std::invalid_argument(INV_VAL);
+          throw std::runtime_error(INV_VAL);
         }
       }
     }
 
-    int extra = 0;
-    if (input >> extra) {
-      throw std::invalid_argument(INV_VAL);
+    char c;
+    while (input.get(c)) {
+      if (!std::isspace(static_cast<unsigned char>(c))) {
+        throw std::runtime_error(INV_VAL);
+      }
     }
 
     const int total_elements = row * col;
@@ -134,19 +137,21 @@ namespace grekova {
           }
           delete[] matrix;
           matrix = nullptr;
-          throw std::invalid_argument(INV_VAL);
+          throw std::runtime_error(INV_VAL);
         }
       }
     }
 
-    int extra = 0;
-    if (input >> extra) {
-      for (int k = 0; k < row; ++k) {
-        delete[] matrix[k];
+    char c;
+    while (input.get(c)) {
+      if (!std::isspace(static_cast<unsigned char>(c))) {
+        for (int k = 0; k < row; ++k) {
+          delete[] matrix[k];
+        }
+        delete[] matrix;
+        matrix = nullptr;
+        throw std::runtime_error(INV_VAL);
       }
-      delete[] matrix;
-      matrix = nullptr;
-      throw std::invalid_argument(INV_VAL);
     }
   }
 
@@ -189,11 +194,19 @@ namespace grekova {
   {
     std::ofstream fout(filename);
 
+    if (!fout.is_open()) {
+      throw std::runtime_error(FILE_ERR);
+    }
+
     fout << rows << " " << cols << " ";
     for (int i = 0; i < rows; ++i) {
       for (int j = 0; j < cols; ++j) {
         fout << matrix[i][j] << " ";
       }
+    }
+
+    if (!fout.good()) {
+      throw std::runtime_error(FILE_ERR);
     }
   }
 
