@@ -151,14 +151,12 @@ void savenko::processFileWithDynamicArray(const std::string &input_filename, con
     }
   }
 
-  const long long calculated_total = static_cast< long long >(rows) * cols;
-
-  if (calculated_total > 2147483647LL) {
+  if (rows > 0 && cols > std::numeric_limits< int >::max() / rows) {
     std::cerr << "Error: Matrix dimensions overflow int limits.\n";
     throw 2;
   }
 
-  const int total_elements = static_cast< int >(calculated_total);
+  const int total_elements = rows * cols;
   int *const matrix = new int[total_elements]();
 
   try {
