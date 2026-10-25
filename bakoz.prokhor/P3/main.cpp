@@ -157,7 +157,7 @@ void bakoz::inputdataStatic(std::ifstream& infile, std::ofstream& outfile)
     }
 
     const int quan_elem = col * line;
-    bakoz::Matrix mat{ line, col, arr };
+    const bakoz::Matrix mat{ line, col, arr };
 
     for (int i = 0; i < quan_elem; ++i)
     {
@@ -214,7 +214,7 @@ void bakoz::inputdataDynamic(std::ifstream& infile, std::ofstream& outfile)
     }
 
     const int quan_elem = col * line;
-    bakoz::Matrix mat{ line, col, new int[quan_elem] {0} };
+    const bakoz::Matrix mat{ line, col, new int[quan_elem] { 0 } };
 
     for (int i = 0; i < quan_elem; ++i)
     {
