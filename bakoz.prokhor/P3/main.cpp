@@ -123,17 +123,17 @@ void bakoz::inputdataStatic(std::ifstream& infile, std::ofstream& outfile)
     int line = 0;
     infile >> line;
 
-    if (infile.eof())
+    if (infile.fail())
     {
-      if (!has_matrices)
+      if (infile.eof() && has_matrices)
       {
-        throw std::invalid_argument(bakoz::NOT_MAT_IN_FILE);
+        break;
       }
-      break;
+      throw std::invalid_argument(bakoz::NOT_MAT_IN_FILE);
     }
 
     int col = 0;
-    if (infile.fail() || !(infile >> col))
+    if (!(infile >> col))
     {
       throw std::invalid_argument(bakoz::NOT_MAT_IN_FILE);
     }
@@ -180,17 +180,18 @@ void bakoz::inputdataDynamic(std::ifstream& infile, std::ofstream& outfile)
   {
     int line = 0;
     infile >> line;
-    if (infile.eof())
+
+    if (infile.fail())
     {
-      if (!has_matrices)
+      if (infile.eof() && has_matrices)
       {
-        throw std::invalid_argument(bakoz::NOT_MAT_IN_FILE);
+        break;
       }
-      break;
+      throw std::invalid_argument(bakoz::NOT_MAT_IN_FILE);
     }
 
     int col = 0;
-    if (infile.fail() || !(infile >> col))
+    if (!(infile >> col))
     {
       throw std::invalid_argument(bakoz::NOT_MAT_IN_FILE);
     }
