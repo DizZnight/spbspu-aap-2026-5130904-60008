@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -7,6 +8,7 @@ namespace malyshev
     const int error_args = 1;
     const int error_data = 2;
     const int max_size = 10000;
+    const size_t max_dynamic_size = 2147483647;
     const std::string elements_more_10000 = "elements more 10000";
 
     int processFixMassive(std::ifstream& ifile, int* matrix, size_t& rows, size_t& cols);
@@ -115,9 +117,13 @@ namespace malyshev
     int processFixMassive(std::ifstream& ifile, int* matrix, size_t& rows, size_t& cols)
     {
         ifile >> rows >> cols;
-        if (ifile.fail() || rows == 0 || cols == 0)
+        if (ifile.fail())
         {
             return error_data;
+        }
+        if (rows == 0 || cols == 0)
+        {
+            return 0;
         }
         const size_t total_el = rows * cols;
         if (total_el > static_cast<size_t>(max_size))
@@ -145,13 +151,18 @@ namespace malyshev
     int processDynamicMassive(std::ifstream& ifile, int*& matrix, size_t& rows, size_t& cols)
     {
         ifile >> rows >> cols;
-        if (ifile.fail() || rows == 0 || cols == 0)
+        if (ifile.fail())
         {
             return error_data;
         }
+        if (rows == 0 || cols == 0)
+        {
+            matrix = nullptr;
+            return 0;
+        }
 
         const size_t total_el = rows * cols;
-        if (total_el > 2147483647)
+        if (total_el > max_dynamic_size)
         {
             return error_data;
         }
