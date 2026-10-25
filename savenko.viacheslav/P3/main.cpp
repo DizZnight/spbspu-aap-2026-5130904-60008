@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <limits>
 
 namespace savenko {
   void readMatrixFromFile(const std::string &input_filename, int *matrix, int max_capacity, int &rows, int &cols);
@@ -60,32 +61,29 @@ void savenko::readMatrixFromFile(const std::string &input_filename, int *matrix,
     throw 2;
   }
 
-  const int total_elements = rows * cols;
-  if (total_elements > max_capacity) {
+  if (static_cast< long long >(rows) * cols > max_capacity) {
     std::cerr << "Error: Matrix exceeds allocated capacity.\n";
     throw 2;
   }
 
+  const int total_elements = rows * cols;
+
   int element_count = 0;
   int current_number = 0;
 
-  while (in_file >> current_number) {
-    if (element_count >= total_elements) {
-      std::cerr << "Error: Extraneous elements found.\n";
-      throw 2;
-    }
-
+  while (element_count < total_elements && (in_file >> current_number)) {
     matrix[element_count] = current_number;
-    element_count = element_count + 1;
-  }
-
-  if (!in_file.eof() && in_file.fail()) {
-    std::cerr << "Error: Invalid character or overflow.\n";
-    throw 2;
+    element_count++;
   }
 
   if (element_count < total_elements) {
     std::cerr << "Error: Not enough elements.\n";
+    throw 2;
+  }
+
+  char trailing_char = 0;
+  if (in_file >> trailing_char) {
+    std::cerr << "Error: Extraneous or invalid elements found.\n";
     throw 2;
   }
 
@@ -153,7 +151,14 @@ void savenko::processFileWithDynamicArray(const std::string &input_filename, con
     }
   }
 
-  const int total_elements = rows * cols;
+  const long long calculated_total = static_cast< long long >(rows) * cols;
+
+  if (calculated_total > 2147483647LL) {
+    std::cerr << "Error: Matrix dimensions overflow int limits.\n";
+    throw 2;
+  }
+
+  const int total_elements = static_cast< int >(calculated_total);
   int *const matrix = new int[total_elements]();
 
   try {
@@ -166,6 +171,9 @@ void savenko::processFileWithDynamicArray(const std::string &input_filename, con
   } catch (int error_code) {
     delete[] matrix;
     throw error_code;
+  } catch (...) {
+    delete[] matrix;
+    throw 2;
   }
 
   delete[] matrix;
