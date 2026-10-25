@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
   int count = 0;
   int variant = 0;
 
-  size_t parse_chars = 0;
+  size_t parsed_chars = 0;
 
   std::string variant_str = "";
   std::string input = "";
@@ -42,9 +42,9 @@ int main(int argc, char *argv[])
 
     variant_str = argv[1];
 
-    variant = std::stoi(argv[1], &parse_chars);
+    variant = std::stoi(argv[1], &parsed_chars);
 
-    if (parse_chars != variant_str.length())
+    if (parsed_chars != variant_str.length())
     {
       throw std::runtime_error("First value is not a num\n");
     }
@@ -52,32 +52,32 @@ int main(int argc, char *argv[])
     input = argv[2];
     output = argv[3];
 
-    stremetskiy::readRowAndCol(input, & row, & col);
+    stremetskiy::readRowAndCol(input, &row, &col);
     if (variant == 1)
     {
       int array[stremetskiy::MAXSIZE_FIX] = {0};
       stremetskiy::fillArr(input, array, row, col);
 
-      for (int i = 1; i < (row-1); i++)
+      for (int i = 1; i < (row - 1); i++)
       {
-        for (int j = 1; j < (col-1); j++)
+        for (int j = 1; j < (col - 1); j++)
         {
 
           const int a1 = array[((i - 1) * col) + j - 1];
           const int a2 = array[((i - 1) * col) + j];
           const int a3 = array[((i - 1) * col) + j + 1];
           const int a4 = array[(i * col) + j - 1];
-          const int a  = array[(i * col) + j];
+          const int a = array[(i * col) + j];
           const int a6 = array[(i * col) + j + 1];
-          const int a7 = array[((i+1) * col) + j - 1];
-          const int a8 = array[((i+1) * col) + j];
-          const int a9 = array[((i+1) * col) + j + 1];
+          const int a7 = array[((i + 1) * col) + j - 1];
+          const int a8 = array[((i + 1) * col) + j];
+          const int a9 = array[((i + 1) * col) + j + 1];
 
           if (a > a1 && a > a2 && a > a3 && a > a4 && a > a6 && a > a7)
           {
             if (a > a8 && a > a9)
             {
-              count++; 
+              count++;
             }
           }
         }
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
     }
     else if (variant == 2)
     {
-      int ** array = stremetskiy::fillArr(input, row, col);
+      int **array = stremetskiy::fillArr(input, row, col);
 
       for (int i = 1; i < (row - 1); i++)
       {
@@ -106,7 +106,6 @@ int main(int argc, char *argv[])
               }
             }
           }
-
         }
       }
 
@@ -134,26 +133,26 @@ int main(int argc, char *argv[])
     return stremetskiy::INVALID_INPUT;
   }
   catch (const std::out_of_range &)
-    {
-      std::cerr << "Invalid input: First out of range \n";
-      return stremetskiy::INVALID_INPUT;
-    }
+  {
+    std::cerr << "Invalid input: First out of range \n";
+    return stremetskiy::INVALID_INPUT;
+  }
   catch (const std::logic_error &ex)
   {
     std::cerr << "Input file problem: " << ex.what();
     return stremetskiy::INVALID_FILE;
   }
   catch (const std::runtime_error &ex)
-    {
-      std::cerr << "Invalid input: " << ex.what();
-      return stremetskiy::INVALID_INPUT;
-    }
+  {
+    std::cerr << "Invalid input: " << ex.what();
+    return stremetskiy::INVALID_INPUT;
+  }
   return 0;
 }
 
 namespace stremetskiy
 {
-  void readRowAndCol(std::string file, int * row, int * col)
+  void readRowAndCol(std::string file, int *row, int *col)
   {
     std::ifstream in(file);
 
@@ -197,7 +196,7 @@ namespace stremetskiy
           {
             throw std::logic_error("Invalid file content\n");
           }
-          *(arr + (i*col) + j) = val;
+          *(arr + (i * col) + j) = val;
         }
       }
 
@@ -247,16 +246,16 @@ namespace stremetskiy
         }
       }
 
-    in >> std::ws;
-    if (in.get() != EOF)
-    {
-      for (int k = 0; k < row; k++)
-            {
-              delete[] result_arr[k];
-            }
-            delete[] result_arr;
-      throw std::logic_error("extra data at the end of file\n");
-    }
+      in >> std::ws;
+      if (in.get() != EOF)
+      {
+        for (int k = 0; k < row; k++)
+        {
+          delete[] result_arr[k];
+        }
+        delete[] result_arr;
+        throw std::logic_error("extra data at the end of file\n");
+      }
 
       return result_arr;
     }
