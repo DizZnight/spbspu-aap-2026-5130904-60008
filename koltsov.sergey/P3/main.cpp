@@ -51,7 +51,6 @@ int main(int argc, char* argv[])
     std::string row_token;
     std::string col_token;
 
-    // Читаем размеры строго как токены, чтобы поймать "2.5"
     if (!(input >> row_token) || !(input >> col_token))
     {
       throw std::runtime_error(koltsov::ERR_MATRIX);
@@ -118,7 +117,6 @@ int koltsov::parseTask(const std::string& raw)
   return value;
 }
 
-// Новая функция строгого парсинга
 int koltsov::parseInteger(const std::string& token)
 {
   try
@@ -152,12 +150,10 @@ void koltsov::readMatrix(std::ifstream& input, int* data, int rows, int cols)
         throw std::runtime_error(ERR_MATRIX);
       }
 
-      // Используем строгий парсер
       data[i * cols + j] = parseInteger(token);
     }
   }
 
-  // Проверка на лишние токены
   if (input >> token)
   {
     throw std::runtime_error(ERR_MATRIX);
