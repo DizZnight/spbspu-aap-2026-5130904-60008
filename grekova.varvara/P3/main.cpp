@@ -92,7 +92,8 @@ int main(int argc, char *argv[])
 }
 
 namespace grekova {
-  void getStaticMatrix(std::ifstream &input, int row, int col, int *out_buffer) {
+  void getStaticMatrix(std::ifstream &input, int row, int col, int *out_buffer)
+  {
     if (row != 0 && col > MAX_SIZE_ARR / row) {
       throw std::invalid_argument(INV_VAL);
     }
@@ -118,7 +119,8 @@ namespace grekova {
     }
   }
 
-  void getDynamicMatrix(std::ifstream &input, int row, int col, int **&matrix) {
+  void getDynamicMatrix(std::ifstream &input, int row, int col, int **&matrix)
+  {
     matrix = new int *[row];
     for (int i = 0; i < row; ++i) {
       matrix[i] = new int[col];
@@ -148,9 +150,11 @@ namespace grekova {
     }
   }
 
-  void processSpiral(int **matrix, int rows, int cols) {
-    if (rows <= 0 || cols <= 0)
+  void processSpiral(int **matrix, int rows, int cols)
+  {
+    if (rows <= 0 || cols <= 0) {
       return;
+    }
 
     int top = 0, bottom = rows - 1, left = 0, right = cols - 1, increment = 1;
 
@@ -181,7 +185,8 @@ namespace grekova {
     }
   }
 
-  void writeMatrixToFile(const std::string &filename, int **matrix, int rows, int cols) {
+  void writeMatrixToFile(const std::string &filename, int **matrix, int rows, int cols)
+  {
     std::ofstream fout(filename);
 
     fout << rows << " " << cols << " ";
@@ -192,7 +197,8 @@ namespace grekova {
     }
   }
 
-  void freeMatrix(int **matrix, int rows, int mode) {
+  void freeMatrix(int **matrix, int rows, int mode)
+  {
     if (matrix) {
       if (mode == 2) {
         for (int i = 0; i < rows; ++i) {
