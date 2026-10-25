@@ -99,7 +99,7 @@ namespace malyshev {
     }
 
     const size_t total_el = rows * cols;
-    if (total_el > static_cast<size_t>(max_size)) {
+    if (total_el > static_cast< size_t >(max_size)) {
       std::cerr << elements_more_10000 << "\n";
       return error_data;
     }
@@ -183,7 +183,7 @@ namespace malyshev {
 
       if (max_in_col > max_ser_len) {
         max_ser_len = max_in_col;
-        max_cols = static_cast<int>(i) + 1;
+        max_cols = static_cast< int >(i) + 1;
       }
     }
 
