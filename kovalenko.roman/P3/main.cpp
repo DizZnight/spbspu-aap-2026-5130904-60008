@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <limits>
 
 namespace kovalenko {
 
@@ -41,27 +42,33 @@ namespace kovalenko {
     }
   }
 
-  void readMatrixData(std::ifstream &in, int *matrix, int total)
+  void readMatrixData(std::ifstream &in, int *matrix, std::size_t total)
   {
-    for (int i = 0; i < total; ++i) {
+    for (std::size_t i = 0; i < total; ++i) {
       if (!(in >> matrix[i])) {
         throw std::runtime_error("Not enough elements in matrix or invalid data");
       }
     }
+    char c;
+    while (in.get(c)) {
+      if (!std::isspace(static_cast< unsigned char >(c))) {
+        throw std::runtime_error("Invalid data after matrix elements");
+      }
+    }
   }
 
-  int findRowWithLongestSeries(const int *matrix, int rows, int cols)
+  int findRowWithLongestSeries(const int *matrix, std::size_t rows, std::size_t cols)
   {
     if (rows == 0 || cols == 0) {
       return 0;
     }
 
-    int best_row = 1;
-    int max_len = 1;
+    std::size_t best_row = 1;
+    std::size_t max_len = 1;
 
-    for (int i = 0; i < rows; ++i) {
-      int current_len = 1;
-      for (int j = 1; j < cols; ++j) {
+    for (std::size_t i = 0; i < rows; ++i) {
+      std::size_t current_len = 1;
+      for (std::size_t j = 1; j < cols; ++j) {
         if (matrix[i * cols + j] == matrix[i * cols + j - 1]) {
           current_len++;
         } else {
@@ -74,7 +81,7 @@ namespace kovalenko {
         }
       }
     }
-    return best_row;
+    return static_cast< int >(best_row);
   }
 
   void writeResult(const std::string &path, int result)
@@ -99,7 +106,12 @@ namespace kovalenko {
     int rows = 0, cols = 0;
     readMatrixDimensions(in, rows, cols);
 
-    const int total = rows * cols;
+    if (cols != 0
+        && static_cast< std::size_t >(rows)
+            > std::numeric_limits< std::size_t >::max() / static_cast< std::size_t >(cols)) {
+      throw std::runtime_error("Matrix dimensions are too large (overflow)");
+    }
+    const std::size_t total = static_cast< std::size_t >(rows) * static_cast< std::size_t >(cols);
     int result = 0;
 
     if (config.mode == 1) {
@@ -109,14 +121,16 @@ namespace kovalenko {
       }
       int static_matrix[kMaxSize];
       readMatrixData(in, static_matrix, total);
-      result = findRowWithLongestSeries(static_matrix, rows, cols);
+      result
+          = findRowWithLongestSeries(static_matrix, static_cast< std::size_t >(rows), static_cast< std::size_t >(cols));
 
     } else if (config.mode == 2) {
       int *dynamic_matrix = nullptr;
       try {
         dynamic_matrix = new int[total];
         readMatrixData(in, dynamic_matrix, total);
-        result = findRowWithLongestSeries(dynamic_matrix, rows, cols);
+        result = findRowWithLongestSeries(
+            dynamic_matrix, static_cast< std::size_t >(rows), static_cast< std::size_t >(cols));
       } catch (...) {
         delete[] dynamic_matrix;
         throw;
