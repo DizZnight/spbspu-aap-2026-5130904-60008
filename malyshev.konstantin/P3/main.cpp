@@ -9,9 +9,9 @@ namespace malyshev
   const int max_size = 10000;
   const std::string elements_more_10000 = "elements more 10000";
 
-  int processFixMassive(std::ifstream &ifile, int *matrix, int &rows, int &cols);
-  int processDynamicMassive(std::ifstream &ifile, int *&matrix, int &rows, int &cols);
-  int longSerCols(const int *matrix, int rows, int cols);
+  int processFixMassive(std::ifstream &ifile, int *matrix, size_t &rows, size_t &cols);
+  int processDynamicMassive(std::ifstream &ifile, int *&matrix, size_t &rows, size_t &cols);
+  int longSerCols(const int *matrix, size_t rows, size_t cols);
 }
 
 int main(int argc, char *argv[])
@@ -26,11 +26,20 @@ int main(int argc, char *argv[])
   }
 
   const std::string num = argv[1];
+  if (num != "1" && num != "2")
+  {
+    std::cerr << "The number of command-line arguments does not match the "
+                 "specification "
+              << "or the first parameter cannot be interpreted "
+              << "as the indicated job numbers\n";
+    return malyshev::error_args;
+  }
+
   const std::string input_filename = argv[2];
   const std::string output_filename = argv[3];
 
-  int rows = 0;
-  int cols = 0;
+  size_t rows = 0;
+  size_t cols = 0;
   int res = 0;
   int read_status = 0;
   int static_matrix[malyshev::max_size];
@@ -49,18 +58,9 @@ int main(int argc, char *argv[])
   {
     read_status = malyshev::processFixMassive(file, static_matrix, rows, cols);
   }
-  else if (num == "2")
-  {
-    read_status = malyshev::processDynamicMassive(file, dynamic_matrix, rows, cols);
-  }
   else
   {
-    std::cerr << "The number of command-line arguments does not match the "
-                 "specification "
-              << "or the first parameter cannot be interpreted "
-              << "as the indicated job numbers\n";
-    file.close();
-    return malyshev::error_args;
+    read_status = malyshev::processDynamicMassive(file, dynamic_matrix, rows, cols);
   }
 
   file.close();
@@ -77,8 +77,8 @@ int main(int argc, char *argv[])
     return read_status;
   }
 
-  const int final_rows = rows;
-  const int final_cols = cols;
+  const size_t final_rows = rows;
+  const size_t final_cols = cols;
 
   if (num == "1")
   {
@@ -112,20 +112,20 @@ int main(int argc, char *argv[])
 
 namespace malyshev
 {
-  int processFixMassive(std::ifstream &ifile, int *matrix, int &rows, int &cols)
+  int processFixMassive(std::ifstream &ifile, int *matrix, size_t &rows, size_t &cols)
   {
     ifile >> rows >> cols;
     if (ifile.fail())
     {
       return error_data;
     }
-    if (rows < 0 || cols < 0 || rows * cols > max_size)
+    const size_t total_el = rows * cols;
+    if (total_el > (size_t)max_size)
     {
       std::cerr << elements_more_10000 << "\n";
       return error_data;
     }
-    const int total_el = rows * cols;
-    for (int i = 0; i < total_el; i++)
+    for (size_t i = 0; i < total_el; i++)
     {
       ifile >> matrix[i];
       if (ifile.fail())
@@ -142,20 +142,23 @@ namespace malyshev
     return 0;
   }
 
-  int processDynamicMassive(std::ifstream &ifile, int *&matrix, int &rows, int &cols)
+  int processDynamicMassive(std::ifstream &ifile, int *&matrix, size_t &rows, size_t &cols)
   {
     ifile >> rows >> cols;
     if (ifile.fail())
     {
       return error_data;
     }
-    if (rows < 0 || cols < 0)
+    
+    const size_t total_el = rows * cols;
+    if (total_el > 2147483647)
     {
       return error_data;
     }
-    matrix = new int[rows * cols];
-    const int total_el = rows * cols;
-    for (int i = 0; i < total_el; i++)
+
+    matrix = new int[total_el];
+
+    for (size_t i = 0; i < total_el; i++)
     {
       ifile >> matrix[i];
       if (ifile.fail())
@@ -176,9 +179,9 @@ namespace malyshev
     return 0;
   }
 
-  int longSerCols(const int *matrix, int rows, int cols)
+  int longSerCols(const int *matrix, size_t rows, size_t cols)
   {
-    if (rows <= 0 || cols <= 0)
+    if (rows == 0 || cols == 0)
     {
       return 0;
     }
@@ -186,12 +189,12 @@ namespace malyshev
     int max_ser_len = 0;
     int max_cols = 0;
 
-    for (int i = 0; i < cols; i++)
+    for (size_t i = 0; i < cols; i++)
     {
       int current_sers = 1;
       int max_in_col = 1;
 
-      for (int j = 1; j < rows; j++)
+      for (size_t j = 1; j < rows; j++)
       {
         if (matrix[j * cols + i] == matrix[(j - 1) * cols + i])
         {
@@ -209,7 +212,7 @@ namespace malyshev
       if (max_in_col > max_ser_len)
       {
         max_ser_len = max_in_col;
-        max_cols = i + 1;
+        max_cols = (int)i + 1;
       }
     }
     return max_cols;
