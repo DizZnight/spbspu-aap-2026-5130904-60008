@@ -149,15 +149,12 @@ namespace malyshev
     {
       return error_data;
     }
-    
     const size_t total_el = rows * cols;
     if (total_el > 2147483647)
     {
       return error_data;
     }
-
     matrix = new int[total_el];
-
     for (size_t i = 0; i < total_el; i++)
     {
       ifile >> matrix[i];
@@ -185,15 +182,12 @@ namespace malyshev
     {
       return 0;
     }
-
     int max_ser_len = 0;
     int max_cols = 0;
-
     for (size_t i = 0; i < cols; i++)
     {
       int current_sers = 1;
       int max_in_col = 1;
-
       for (size_t j = 1; j < rows; j++)
       {
         if (matrix[j * cols + i] == matrix[(j - 1) * cols + i])
