@@ -1,3 +1,4 @@
+#include <cctype>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -49,7 +50,7 @@ namespace kovalenko {
         throw std::runtime_error("Not enough elements in matrix or invalid data");
       }
     }
-    char c;
+    char c = 0;
     while (in.get(c)) {
       if (!std::isspace(static_cast< unsigned char >(c))) {
         throw std::runtime_error("Invalid data after matrix elements");
