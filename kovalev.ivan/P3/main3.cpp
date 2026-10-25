@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     std::cerr << "Num must be 1 or 2\n";
     return kovalev::ERR_ARGUMENTS;
   }
-  const int mode = static_cast<int>(modeValue);
+  const int mode = static_cast< int >(modeValue);
   try
   {
     int rows = 0;
@@ -51,14 +51,14 @@ int main(int argc, char* argv[])
     {
       throw std::runtime_error("Rows and Cols must be positive");
     }
-    const long long total = static_cast<long long>(rows) * static_cast<long long>(cols);
+    const long long total = static_cast< long long >(rows) * static_cast< long long >(cols);
     if (mode == kovalev::STATIC_ARR && total > kovalev::MAXSIZE)
     {
       throw std::runtime_error("Too many arguments");
     }
     int static_matrix[kovalev::MAXSIZE] = {};
     const bool isDynamic = (mode == kovalev::DYNAMIC_ARR);
-    int* matrix = isDynamic ? new int[total] : static_matrix;
+    int* const matrix = isDynamic ? new int[total] : static_matrix;
     for (long long i = 0; i < total; i++)
     {
       if (!(input >> matrix[i]))
@@ -127,7 +127,7 @@ int kovalev::countMin(const int* matrix, int rows, int cols)
     {
       const int index = row * cols + col;
       const int current = matrix[index];
-      bool isMin = true;
+      bool is_min = true;
       for (int i = -1; i <= 1; i++)
       {
         for (int j = -1; j <= 1; j++)
@@ -139,11 +139,11 @@ int kovalev::countMin(const int* matrix, int rows, int cols)
           const int neighborIndex = (row + i) * cols + col + j;
           if (current >= matrix[neighborIndex])
           {
-            isMin = false;
+            is_min = false;
           }
         }
       }
-      if (isMin)
+      if (is_min)
       {
         count++;
       }
