@@ -23,7 +23,8 @@ namespace kiriukhin {
         return false;
       }
     }
-    return true;
+    in >> std::ws;
+    return in.eof();
   }
 
   int countLocalMax(const int *a, int rows, int cols)
